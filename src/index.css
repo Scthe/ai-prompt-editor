@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  @apply bg-gray-300;
+  @apply text-zinc-800;
+  --text-lora: theme('colors.sky.500');
+}
+
+@layer base {
+}
+
+@layer utilities {
+  .alternateRow:nth-child(even) {
+    @apply bg-gray-200;
+  }
+
+  .text-lora {
+    color: var(--text-lora);
+  }
+}
