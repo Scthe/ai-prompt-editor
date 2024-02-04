@@ -1,0 +1,10 @@
+# yarn 
+.yarn
+yarn.lock
+.pnp.cjs
+.pnp.loader.mjs
+
+# my
+public
+build
+_references
