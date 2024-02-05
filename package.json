@@ -17,7 +17,10 @@
     "lint": "eslint -c .eslintrc.json --ext .jsx,.js,.tsx,.ts src"
   },
   "dependencies": {
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "classnames": "^2.5.1",
+    "framer-motion": "^11.0.3",
     "js-tiktoken": "^1.0.10",
     "localforage": "^1.10.0",
     "prismjs": "^1.29.0",
