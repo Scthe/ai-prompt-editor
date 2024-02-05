@@ -1,5 +1,6 @@
 export * from './types';
 export * from './string';
+export * from './zustand';
 
 declare global {
   const IS_PRODUCTION: boolean;
@@ -28,4 +29,19 @@ export function typesafeObjectKeys<T extends string | number | symbol>(
 
 export const unique = <T>(...arr: T[]) => {
   return [...new Set(arr)];
+};
+
+export const deepClone = <T>(value: T): T => structuredClone(value);
+
+export const generateId = (): string =>
+  Math.random().toString(36).replace(/^0\./, '_');
+
+export const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (err) {
+    console.error('Async: Could not copy text: ', err);
+  }
+  return false;
 };

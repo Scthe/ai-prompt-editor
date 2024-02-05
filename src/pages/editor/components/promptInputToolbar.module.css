@@ -1,0 +1,4 @@
+.toolbarIcon {
+  @apply inline-block;
+  @apply transition-colors;
+}

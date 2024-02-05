@@ -1,5 +1,5 @@
 export * from './astDiffTable';
-export * from './astFlattenRenderer';
+export * from './astListRenderer';
 export * from './astRenderer';
 export * from './parsingMessages';
 export * from './promptInput';

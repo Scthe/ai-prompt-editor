@@ -1,6 +1,12 @@
 import React from 'react';
-import { PromptAstGroup, getBracketsString } from '../../parser';
+import {
+  PromptAstGroup,
+  getBracketsString,
+  hasNoChildren,
+  isRootNode,
+} from '../../parser';
 import { astTokenContent, AstNodeRender } from './astNode';
+import { EmptyContent } from './emptyContent';
 
 export function AstRenderer({
   astGroup,
@@ -9,6 +15,10 @@ export function AstRenderer({
   astGroup: PromptAstGroup;
   depth?: number;
 }) {
+  if (isRootNode(astGroup) && hasNoChildren(astGroup)) {
+    return <EmptyContent />;
+  }
+
   const isEmpty = astGroup.bracketCount === 0;
   const nextDepth = isEmpty ? depth : depth + astGroup.bracketCount;
   const bracketOpenText = getBracketsString(astGroup, 'open');

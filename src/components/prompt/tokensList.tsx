@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import LoadingPrompt from '../loaders';
 import { GptToken } from 'utils/gpt4Tokenizer';
+import { EmptyContent } from './emptyContent';
 
 const COLORS = [
   'bg-red-400',
@@ -13,17 +13,16 @@ const COLORS = [
 
 interface Props {
   tokens: GptToken[];
-  isLoading: boolean;
 }
 
-export function TokensList({ isLoading, tokens }: Props) {
-  if (isLoading) {
-    return <LoadingPrompt />;
+// TODO add 'what is this' help dialog. Add this to all tabs.
+export function TokensList({ tokens }: Props) {
+  if (tokens.length === 0) {
+    return <EmptyContent />;
   }
 
   return (
     <div>
-      {tokens.length === 0 ? 'Prompt is empty' : undefined}
       {tokens.map((token, idx) => (
         <TokenStr key={idx} idx={idx} token={token} />
       ))}

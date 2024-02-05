@@ -1,10 +1,11 @@
 import React from 'react';
 import cx from 'classnames';
 import { ParsingMessage } from '../../parser';
+import { EmptyContent } from './emptyContent';
 
 export function ParsingMessages({ messages }: { messages: ParsingMessage[] }) {
   if (messages.length === 0) {
-    return undefined;
+    return <EmptyContent text="Everything seems OK" />;
   }
 
   return (

@@ -1,27 +1,26 @@
 import React from 'react';
 import { DetailsTab, GroupParsingResult } from '../types';
 import {
-  AstFlattenRenderer,
+  AstListRenderer,
   AstRenderer,
   ParsingMessages,
   TokensList,
 } from 'components/prompt';
-import { GptToken } from 'utils/gpt4Tokenizer';
 
-interface Props extends GroupParsingResult {
-  tokens: GptToken[];
+interface Props {
   activeTab: DetailsTab;
+  data: GroupParsingResult;
 }
 
-export const DetailsContent = ({ activeTab, ast, messages, tokens }: Props) => {
+export const DetailsContent = ({ activeTab, data }: Props) => {
   switch (activeTab) {
     case 'list':
-      return <AstFlattenRenderer astGroup={ast} />;
+      return <AstListRenderer astGroup={data.ast} />;
     case 'ast':
-      return <AstRenderer astGroup={ast} />;
+      return <AstRenderer astGroup={data.ast} />;
     case 'messages':
-      return <ParsingMessages messages={messages} />;
+      return <ParsingMessages messages={data.messages} />;
     case 'tokens':
-      return <TokensList isLoading={false} tokens={tokens} />;
+      return <TokensList tokens={data.tokens} />;
   }
 };

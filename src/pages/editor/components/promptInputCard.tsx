@@ -1,27 +1,39 @@
-import React from 'react';
-import { Card, CardContent } from 'components';
+import React, { useCallback, useRef } from 'react';
+import { CARD_SHADOW_GRAY, Card, CardContent } from 'components';
 import { ParsePromptFn } from 'hooks/useParsedPrompt';
 import { PromptInputToolbar } from './promptInputToolbar';
 import { PromptInput } from 'components/prompt';
+import { EditorGroup } from '../types';
 
 interface Props {
-  name: string;
-  initialPrompt: string;
+  group: EditorGroup;
   parsePrompt: ParsePromptFn;
 }
 
-export const PromptInputCard = ({
-  name,
-  initialPrompt,
-  parsePrompt,
-}: Props) => {
+export const PromptInputCard = ({ group, parsePrompt }: Props) => {
+  const { initialPrompt } = group;
+  const currentPromptRef = useRef<string>(initialPrompt);
+
+  const onPromptChanged = useCallback(
+    (text: string) => {
+      currentPromptRef.current = text;
+      parsePrompt(text);
+    },
+    [parsePrompt]
+  );
+
   return (
-    <Card shadowDirection="left" className="h-fit" borderTopOnMobile>
-      <PromptInputToolbar name={name} />
+    <Card
+      shadowDirection="left"
+      className="h-fit"
+      borderTopOnMobile
+      shadowColor={group.enabled ? undefined : CARD_SHADOW_GRAY}
+    >
+      <PromptInputToolbar group={group} currentPromptRef={currentPromptRef} />
       <CardContent>
         <PromptInput
           initialPrompt={initialPrompt}
-          onPromptChanged={parsePrompt}
+          onPromptChanged={onPromptChanged}
         />
       </CardContent>
     </Card>

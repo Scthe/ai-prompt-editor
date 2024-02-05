@@ -3,11 +3,13 @@ import React from 'react';
 import { DetailsTab } from '../types';
 
 export const DetailsToolbar = ({
+  groupId,
   tokenCount,
   messagesCount,
   activeTab,
   onTabSwitch,
 }: {
+  groupId: string;
   tokenCount: number | undefined;
   messagesCount: number | undefined;
   activeTab: DetailsTab;
@@ -25,7 +27,12 @@ export const DetailsToolbar = ({
 
   return (
     <CardToolbar>
-      <Tabs activeTab={activeTab} tabs={TABS} onTabSwitch={onTabSwitch} />
+      <Tabs
+        id={`group-${groupId}-details-tabs`}
+        activeTab={activeTab}
+        tabs={TABS}
+        onTabSwitch={onTabSwitch}
+      />
     </CardToolbar>
   );
 };

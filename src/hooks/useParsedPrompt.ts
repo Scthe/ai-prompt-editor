@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { ParsingResult, parsePrompt } from '../parser';
+import { parsePrompt } from '../parser';
 import { useEffectOnce } from './useEffectOnce';
+import { tokenizeGpt4 } from 'utils/gpt4Tokenizer';
+import { GroupParsingResult } from 'pages/editor/types';
 
 const PARSE_DEBOUNCE_MS = 2000;
 
@@ -9,25 +11,36 @@ export type ParsePromptFn = (newPrompt: string) => void;
 
 interface ParsedPrompt {
   isParsing: boolean;
-  result: ParsingResult | undefined;
+  result: GroupParsingResult | undefined;
   parsePrompt: ParsePromptFn;
 }
 
+const parseAndTokenize = (text: string): GroupParsingResult => {
+  const [ast, messages] = parsePrompt(text);
+  const tokens = tokenizeGpt4(ast);
+  return { ast, messages, tokens };
+};
+
 export const useParsedPrompt = (initialPrompt: string): ParsedPrompt => {
   const [isParsing, setIsParsing] = useState(true);
-  const [parsingResult, setParsingResult] = useState<ParsingResult | undefined>(
-    undefined
-  );
+  const [parsingResult, setParsingResult] = useState<
+    GroupParsingResult | undefined
+  >(undefined);
 
   // set initial
   useEffectOnce(() => {
-    const result = parsePrompt(initialPrompt);
-    setParsingResult(result);
-    setIsParsing(false);
+    // `setTimeout` is needed as React tries to optimize layouts change.
+    // So, when user adds a new group, React waits for parsing to be done
+    // before new group is shown to the user. This takes a second or two.
+    setTimeout(() => {
+      const result = parseAndTokenize(initialPrompt);
+      setParsingResult(result);
+      setIsParsing(false);
+    }, 0);
   });
 
   const parseNewPrompt = useDebouncedCallback((newPrompt: string) => {
-    const result = parsePrompt(newPrompt);
+    const result = parseAndTokenize(newPrompt);
     setParsingResult(result);
     setIsParsing(false);
   }, PARSE_DEBOUNCE_MS);

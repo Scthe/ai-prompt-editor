@@ -6,6 +6,7 @@
   @apply bg-gray-300;
   @apply text-zinc-800;
   --text-lora: theme('colors.sky.500');
+  color: #131313;
 }
 
 @layer base {

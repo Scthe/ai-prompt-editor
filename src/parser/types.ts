@@ -50,7 +50,7 @@ export const CURLY_BRACKET_ATTENTION = 1.1;
 export const SQUARE_BRACKET_ATTENTION = 1 / CURLY_BRACKET_ATTENTION;
 
 export const newAstGroup = (
-  parent: PromptAstGroup,
+  parent: PromptAstGroup | undefined,
   bracket: PromptAstGroup['groupType']
 ): PromptAstGroup => ({
   type: 'group',

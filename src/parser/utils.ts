@@ -114,10 +114,7 @@ export const traverse = (
   }
 };
 
-export const flattenAstTree = (
-  root: PromptAstGroup,
-  sort?: 'asc' | 'desc'
-): PromptAstToken[] => {
+export const flattenAstTree = (root: PromptAstGroup): PromptAstToken[] => {
   const result: PromptAstToken[] = [];
 
   traverse(root, (node) => {
@@ -125,11 +122,6 @@ export const flattenAstTree = (
       result.push(node);
     }
   });
-
-  if (sort) {
-    const orderMod = sort === 'asc' ? 1 : -1;
-    result.sort((a, b) => orderMod * (a.resolvedWeight - b.resolvedWeight));
-  }
 
   return result;
 };
@@ -197,6 +189,9 @@ const diffAstTreeNodes = (
     valueB,
   };
 };
+
+export const hasNoChildren = (astGroup: PromptAstGroup) =>
+  astGroup.children.length === 0;
 
 // TODO remember to close all remaining params after each group!
 // export const mergeAstTrees = (...astGroups: PromptAstGroup) => ...

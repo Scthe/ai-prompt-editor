@@ -18,3 +18,9 @@ export const duplicateStr = (str: string, cnt: number) => {
     .map((_a) => str)
     .join('');
 };
+
+export const cmpAlphabetical = (a: string, b: string) => {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+};
