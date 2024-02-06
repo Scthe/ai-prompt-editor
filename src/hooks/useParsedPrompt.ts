@@ -9,13 +9,13 @@ const PARSE_DEBOUNCE_MS = 2000;
 
 export type ParsePromptFn = (newPrompt: string) => void;
 
-interface ParsedPrompt {
+export interface ParsedPrompt {
   isParsing: boolean;
   result: GroupParsingResult | undefined;
   parsePrompt: ParsePromptFn;
 }
 
-const parseAndTokenize = (text: string): GroupParsingResult => {
+export const parseAndTokenize = (text: string): GroupParsingResult => {
   const [ast, messages] = parsePrompt(text);
   const tokens = tokenizeGpt4(ast);
   return { ast, messages, tokens };

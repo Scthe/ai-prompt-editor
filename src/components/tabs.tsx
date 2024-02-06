@@ -9,16 +9,18 @@ type TabsProps<T> = {
   activeTab: T;
   tabs: TabDef<T>[];
   onTabSwitch: (nextTab: T) => void;
+  className?: string;
 };
 
 export const Tabs = <T extends string>({
   activeTab,
   id,
   tabs,
+  className,
   onTabSwitch,
 }: TabsProps<T>): React.ReactElement => {
   return (
-    <div className="flex flex-wrap justify-center">
+    <div className={`flex flex-wrap justify-center ${className}`}>
       <div className="relative flex text-gray-900 capitalize">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;

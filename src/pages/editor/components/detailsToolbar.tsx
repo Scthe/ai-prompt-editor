@@ -1,6 +1,7 @@
-import { CardToolbar, TabDef, Tabs } from 'components';
+import { CardToolbar } from 'components';
 import React from 'react';
 import { DetailsTab } from '../types';
+import { PromptDetailsTabs } from 'components/promptDetails/promptDetailsTabs';
 
 export const DetailsToolbar = ({
   groupId,
@@ -15,22 +16,13 @@ export const DetailsToolbar = ({
   activeTab: DetailsTab;
   onTabSwitch: (nextTab: DetailsTab) => void;
 }) => {
-  const tokensPill = tokenCount ? ` (${tokenCount})` : '';
-  const messagesPill = messagesCount ? ` (${messagesCount})` : '';
-
-  const TABS: Array<TabDef<DetailsTab>> = [
-    { id: 'list', label: 'list' },
-    { id: 'ast', label: 'ast' },
-    { id: 'tokens', label: `tokens${tokensPill}` },
-    { id: 'messages', label: `messages${messagesPill}` },
-  ];
-
   return (
     <CardToolbar>
-      <Tabs
+      <PromptDetailsTabs
         id={`group-${groupId}-details-tabs`}
+        tokenCount={tokenCount}
+        messagesCount={messagesCount}
         activeTab={activeTab}
-        tabs={TABS}
         onTabSwitch={onTabSwitch}
       />
     </CardToolbar>

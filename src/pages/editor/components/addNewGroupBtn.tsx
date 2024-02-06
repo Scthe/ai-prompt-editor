@@ -1,7 +1,7 @@
 import Icon from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
 import React from 'react';
-import useEditorGroupsStore from 'store/editorStore';
+import useEditorGroupsStore from 'pages/editor/editorStore';
 
 // TODO maybe move it to old-school 'floating action button' in bottom right corner?
 export const AddNewGroupBtn = () => {

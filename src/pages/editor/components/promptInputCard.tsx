@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react';
 import { CARD_SHADOW_GRAY, Card, CardContent } from 'components';
 import { ParsePromptFn } from 'hooks/useParsedPrompt';
 import { PromptInputToolbar } from './promptInputToolbar';
-import { PromptInput } from 'components/prompt';
+import { PromptInput } from 'components/promptInput';
 import { EditorGroup } from '../types';
 
 interface Props {

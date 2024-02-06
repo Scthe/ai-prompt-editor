@@ -9,7 +9,7 @@ import Icon from '@mdi/react';
 import { mdiClose } from '@mdi/js';
 import styles from './promptInputToolbar.module.css';
 import { EditorGroup } from '../types';
-import useEditorGroupsStore from 'store/editorStore';
+import useEditorGroupsStore from 'pages/editor/editorStore';
 import { ModalController } from 'components';
 import { DeleteConfirmModal } from './deleteConfirmModal';
 import { Toggle } from 'components/toggle';

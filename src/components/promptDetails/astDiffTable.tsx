@@ -11,9 +11,9 @@ export function AstDiffTable({
   return (
     <table className="w-full text-left whitespace-no-wrap table-fixed ">
       <thead>
-        <tr className="text-center bg-zinc-100 text-zinc-800 &_first:bg-red-500">
-          <th className="py-2 w-28 ">Prompt A</th>
-          <th className="w-28 ">Prompt B</th>
+        <tr className="text-center bg-zinc-100 text-zinc-800">
+          <th className="py-2 w-28 ">Before</th>
+          <th className="w-28 ">After</th>
           <th className="px-4 text-left">Token</th>
         </tr>
       </thead>
@@ -34,9 +34,9 @@ const DiffRow = ({ tokenDiff }: { tokenDiff: PromptAstTokenDiff }) => {
   return (
     <tr
       key={`${tokenDiff.token.value}-${tokenDiff.token.isLora}`}
-      className="even:bg-zinc-700"
+      className="alternateRow hover:bg-sky-100"
     >
-      <td className="text-center">
+      <td className="py-1 text-center">
         <WeightValue value={tokenDiff.valueA} otherValue={tokenDiff.valueB} />
       </td>
       <td className="text-center">
@@ -58,7 +58,7 @@ const WeightValue = ({
   const isSmaller = value === undefined || (otherValue && otherValue > value);
   return (
     <span
-      className={cx('font-mono', isSmaller ? 'text-red-400' : 'text-green-400')}
+      className={cx('font-mono', isSmaller ? 'text-red-500' : 'text-green-500')}
     >
       {txt}
     </span>

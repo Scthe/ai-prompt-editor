@@ -45,3 +45,21 @@ export const copyToClipboard = async (text: string) => {
   }
   return false;
 };
+
+export function safeJsonStringify(data: unknown, space?: number): string {
+  const seen: unknown[] = [];
+
+  return JSON.stringify(
+    data,
+    function (_key, val) {
+      if (val != null && typeof val == 'object') {
+        if (seen.indexOf(val) >= 0) {
+          return '<cyclic>';
+        }
+        seen.push(val);
+      }
+      return val;
+    },
+    space
+  );
+}

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { create } from 'zustand';
 
 import { logger } from 'utils';

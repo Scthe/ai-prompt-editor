@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import cx from 'classnames';
 import { EditorGroup } from '../types';
-import useEditorGroupsStore from 'store/editorStore';
+import useEditorGroupsStore from 'pages/editor/editorStore';
 
 interface Props {
   group: EditorGroup;

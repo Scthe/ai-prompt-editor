@@ -7,8 +7,8 @@ import {
 import { CARD_SHADOW_GRAY, Card, CardContent } from 'components';
 import PromptLoader from 'components/loaders';
 import { DetailsToolbar } from './detailsToolbar';
-import { DetailsContent } from './detailsContent';
-import useEditorGroupsStore from 'store/editorStore';
+import { PromptDetailsContent } from '../../../components/promptDetails/promptDetailsContent';
+import useEditorGroupsStore from 'pages/editor/editorStore';
 
 interface Props {
   isParsing: boolean;
@@ -35,7 +35,7 @@ export const DetailsCard = ({ group, data, isParsing }: Props) => {
       {isLoading ? <PromptLoader /> : undefined}
 
       <CardContent>
-        <DetailsContent
+        <PromptDetailsContent
           activeTab={group.tab}
           data={data || EMPTY_GROUP_PARSING_RESULT}
         />

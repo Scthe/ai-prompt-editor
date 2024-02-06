@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 import Editor from 'react-simple-code-editor';
 import 'prismjs/themes/prism.css';
 import { highlight } from 'prismjs';
@@ -19,6 +20,8 @@ interface Props {
   initialPrompt: string;
   onPromptChanged: (newPrompt: string) => void;
   className?: string;
+  disabled?: boolean;
+  withBorder?: boolean;
 }
 
 /**
@@ -34,11 +37,20 @@ export function PromptInput({
   className,
   initialPrompt,
   onPromptChanged,
+  disabled,
+  withBorder,
 }: Props) {
   const [code, setCode] = React.useState(initialPrompt);
+
   return (
-    <div className={`${className}`}>
+    <div
+      className={cx(
+        className,
+        withBorder && 'border border-gray-700 rounded-sm'
+      )}
+    >
       <Editor
+        disabled={disabled}
         value={code}
         onValueChange={(code) => {
           setCode(code);

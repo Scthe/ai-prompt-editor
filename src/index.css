@@ -13,7 +13,7 @@
 }
 
 @layer utilities {
-  .alternateRow:nth-child(even) {
+  .alternateRow:nth-child(odd) {
     @apply bg-gray-200;
   }
 

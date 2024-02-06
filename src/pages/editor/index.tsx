@@ -4,8 +4,9 @@ import { ScreenModeSwitcher } from './components/screenModeSwitcher';
 import { useParsedPrompt } from 'hooks/useParsedPrompt';
 import { DetailsCard } from './components/detailsCard';
 import { PromptInputCard } from './components/promptInputCard';
-import { useAllEditorGroups, useEditorGroup } from 'store/editorStore';
+import { useAllEditorGroups, useEditorGroup } from 'pages/editor/editorStore';
 import { AddNewGroupBtn } from './components/addNewGroupBtn';
+import { TopRightMenu } from 'components';
 
 export default function EditorPage() {
   const [activeScreen, setActiveScreen] = useState<ScreenMode>('editor');
@@ -14,6 +15,8 @@ export default function EditorPage() {
 
   return (
     <main className="relative max-w-screen-xl min-h-screen px-2 pt-20 pb-8 mx-auto md:px-4">
+      <TopRightMenu targetPage="diff" />
+
       <ScreenModeSwitcher
         activeMode={activeScreen}
         onModeSwitch={setActiveScreen}
