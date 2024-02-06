@@ -40,8 +40,8 @@ export const astTokenContent = (token: PromptAstToken) => {
   return (
     <>
       {token.value}
-      <span className={'inline-block ml-2 text-indigo-500'}>
-        {`| attention: ${token.resolvedWeight.toFixed(2)}`}
+      <span className={'inline-block ml-1 text-indigo-500'}>
+        {`:${token.resolvedWeight.toFixed(2)}`}
       </span>
     </>
   );

@@ -25,13 +25,13 @@ export const ResultCard = (props: ResultCardProps) => {
   const { before, after } = props;
   const isLoading = before.isParsing || after.isParsing;
 
-  const [activeTab, setActiveTab] = useState<DiffTab>('before'); // TODO revert to diff
+  const [activeTab, setActiveTab] = useState<DiffTab>('diff');
 
   return (
     <Card shadowColor="transparent" className="h-fit" borderTopOnMobile>
       {isLoading ? <PromptLoader /> : undefined}
 
-      <CardContent>
+      <CardContent className="md:pb-6 md:px-6">
         <Tabs
           id={`diff-tabs`}
           activeTab={activeTab}

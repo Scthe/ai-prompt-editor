@@ -24,10 +24,17 @@ export const Title = ({
 
 export const SectionHeader = ({
   children,
+  actions,
   className,
 }: PropsWithChildren<{
   className?: string;
-}>) => <h3 className={cx('mb-2', className)}>{children}</h3>;
+  actions?: React.ReactNode;
+}>) => (
+  <div className={cx('mb-2 flex justify-between text-gray-900', className)}>
+    <h3>{children}</h3>
+    {actions ? <div>{actions}</div> : undefined}
+  </div>
+);
 
 export const Bold = ({
   children,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import cx from 'classnames';
 import Editor from 'react-simple-code-editor';
 import 'prismjs/themes/prism.css';
@@ -22,6 +22,7 @@ interface Props {
   className?: string;
   disabled?: boolean;
   withBorder?: boolean;
+  textRef?: PromptTextRef;
 }
 
 /**
@@ -39,8 +40,13 @@ export function PromptInput({
   onPromptChanged,
   disabled,
   withBorder,
+  textRef,
 }: Props) {
   const [code, setCode] = React.useState(initialPrompt);
+
+  if (textRef) {
+    textRef.current = code;
+  }
 
   return (
     <div
@@ -65,4 +71,11 @@ export function PromptInput({
       />
     </div>
   );
+}
+
+export type PromptTextRef = React.MutableRefObject<string>;
+
+/** Use this to get access to always up to date prompt text  */
+export function usePromptTextRef() {
+  return useRef<string>('');
 }

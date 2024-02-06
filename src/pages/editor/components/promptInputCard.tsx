@@ -1,8 +1,8 @@
-import React, { useCallback, useRef } from 'react';
+import React from 'react';
 import { CARD_SHADOW_GRAY, Card, CardContent } from 'components';
 import { ParsePromptFn } from 'hooks/useParsedPrompt';
 import { PromptInputToolbar } from './promptInputToolbar';
-import { PromptInput } from 'components/promptInput';
+import { PromptInput, usePromptTextRef } from 'components/promptInput';
 import { EditorGroup } from '../types';
 
 interface Props {
@@ -12,15 +12,7 @@ interface Props {
 
 export const PromptInputCard = ({ group, parsePrompt }: Props) => {
   const { initialPrompt } = group;
-  const currentPromptRef = useRef<string>(initialPrompt);
-
-  const onPromptChanged = useCallback(
-    (text: string) => {
-      currentPromptRef.current = text;
-      parsePrompt(text);
-    },
-    [parsePrompt]
-  );
+  const promptTextRef = usePromptTextRef();
 
   return (
     <Card
@@ -29,11 +21,12 @@ export const PromptInputCard = ({ group, parsePrompt }: Props) => {
       borderTopOnMobile
       shadowColor={group.enabled ? undefined : CARD_SHADOW_GRAY}
     >
-      <PromptInputToolbar group={group} currentPromptRef={currentPromptRef} />
+      <PromptInputToolbar group={group} promptTextRef={promptTextRef} />
       <CardContent>
         <PromptInput
           initialPrompt={initialPrompt}
-          onPromptChanged={onPromptChanged}
+          onPromptChanged={parsePrompt}
+          textRef={promptTextRef}
         />
       </CardContent>
     </Card>

@@ -1,24 +1,79 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
-import { PromptAstTokenDiff } from '../../parser';
+import { PromptAstTokenDiff, getAstTokenDiffDelta } from '../../parser';
 import { getAsLoraElement } from './astNode';
+import { DiffColumnsSort } from 'pages/diff/types';
+import { SortOrder, oppositeSortOrder } from 'utils';
+import { mdiTriangle, mdiTriangleDown } from '@mdi/js';
+import Icon from '@mdi/react';
+import { SORTERS } from 'pages/diff/utils/diffs';
 
 export function AstDiffTable({
   tokenDiffs,
 }: {
   tokenDiffs: PromptAstTokenDiff[];
 }) {
+  const [sortCol, setSortCol] = useState<DiffColumnsSort>('token');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const onChangeSort = (col: DiffColumnsSort) => {
+    if (col === sortCol) {
+      setSortOrder((s) => oppositeSortOrder(s));
+    } else {
+      setSortCol(col);
+      setSortOrder('asc');
+    }
+  };
+
+  const data = useMemo(() => {
+    return tokenDiffs.toSorted((a, b) => {
+      const cmp = SORTERS[sortCol](a, b);
+      const ordMod = sortOrder === 'asc' ? 1 : -1;
+      return cmp * ordMod;
+    });
+  }, [sortCol, sortOrder, tokenDiffs]);
+
   return (
     <table className="w-full text-left whitespace-no-wrap table-fixed ">
       <thead>
         <tr className="text-center bg-zinc-100 text-zinc-800">
-          <th className="py-2 w-28 ">Before</th>
-          <th className="w-28 ">After</th>
-          <th className="px-4 text-left">Token</th>
+          <DiffHeader
+            text="Change"
+            col="change"
+            small
+            className="py-2"
+            activeSortCol={sortCol}
+            activeSortOrder={sortOrder}
+            onClick={onChangeSort}
+          />
+          <DiffHeader
+            text="Before"
+            col="before"
+            small
+            activeSortCol={sortCol}
+            activeSortOrder={sortOrder}
+            onClick={onChangeSort}
+          />
+          <DiffHeader
+            text="After"
+            col="after"
+            small
+            activeSortCol={sortCol}
+            activeSortOrder={sortOrder}
+            onClick={onChangeSort}
+          />
+          <DiffHeader
+            text="Token"
+            col="token"
+            className="px-4 text-left"
+            activeSortCol={sortCol}
+            activeSortOrder={sortOrder}
+            onClick={onChangeSort}
+          />
         </tr>
       </thead>
       <tbody>
-        {tokenDiffs.map((tokenDiff) => (
+        {data.map((tokenDiff) => (
           <DiffRow
             key={`${tokenDiff.token.value}-${tokenDiff.token.isLora}`}
             tokenDiff={tokenDiff}
@@ -29,17 +84,56 @@ export function AstDiffTable({
   );
 }
 
+// TODO a11y
+const DiffHeader = (props: {
+  text: string;
+  col: DiffColumnsSort;
+  activeSortCol: DiffColumnsSort;
+  activeSortOrder: SortOrder;
+  small?: boolean;
+  className?: string;
+  onClick: (col: DiffColumnsSort) => void;
+}) => {
+  const isActive = props.activeSortCol === props.col;
+  const isAsc = props.activeSortOrder === 'asc';
+
+  return (
+    <th
+      onClick={() => props.onClick(props.col)}
+      className={cx(
+        props.className,
+        'group cursor-pointer transition-colors hover:text-sky-400',
+        props.small && 'w-28',
+        isActive && 'text-sky-500'
+      )}
+    >
+      <span className="">{props.text}</span>
+      {isActive ? (
+        <Icon
+          className="inline-block ml-1 translate-y-[-2px]"
+          path={isAsc ? mdiTriangle : mdiTriangleDown}
+          size={0.5}
+        />
+      ) : undefined}
+    </th>
+  );
+};
+
 const DiffRow = ({ tokenDiff }: { tokenDiff: PromptAstTokenDiff }) => {
   const asLora = getAsLoraElement(tokenDiff.token);
+
   return (
     <tr
       key={`${tokenDiff.token.value}-${tokenDiff.token.isLora}`}
       className="alternateRow hover:bg-sky-100"
     >
-      <td className="py-1 text-center">
+      <td className="py-1 font-mono text-center">
+        <TokenDelta tokenDiff={tokenDiff} />
+      </td>
+      <td className="font-mono text-center">
         <WeightValue value={tokenDiff.valueA} otherValue={tokenDiff.valueB} />
       </td>
-      <td className="text-center">
+      <td className="font-mono text-center">
         <WeightValue value={tokenDiff.valueB} otherValue={tokenDiff.valueA} />
       </td>
       <td className="px-4">{asLora ? asLora : tokenDiff.token.value}</td>
@@ -56,11 +150,30 @@ const WeightValue = ({
 }) => {
   const txt = value?.toFixed(2) || '-';
   const isSmaller = value === undefined || (otherValue && otherValue > value);
+  return <span className={cx(isSmaller ? '' : 'text-sky-500')}>{txt}</span>;
+};
+
+function TokenDelta({ tokenDiff }: { tokenDiff: PromptAstTokenDiff }) {
+  const delta = getAstTokenDiffDelta(tokenDiff);
+
+  if (delta === 'added') {
+    return <span className="text-green-500">Added</span>;
+  }
+  if (delta === 'removed') {
+    return <span className="text-red-500">Removed</span>;
+  }
+  if (delta === '-') {
+    return '-';
+  }
+
+  // show number
+  const sign = delta > 0 ? '+' : ''; // negative val. already has own sign
   return (
     <span
-      className={cx('font-mono', isSmaller ? 'text-red-500' : 'text-green-500')}
+      className={cx(delta > 0 && 'text-green-500', delta < 0 && 'text-red-500')}
     >
-      {txt}
+      {sign}
+      {delta === 0.0 ? '-' : delta.toFixed(2)}
     </span>
   );
-};
+}

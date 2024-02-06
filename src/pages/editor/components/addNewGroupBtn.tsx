@@ -2,6 +2,7 @@ import Icon from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
 import React from 'react';
 import useEditorGroupsStore from 'pages/editor/editorStore';
+import { SR_IGNORE_SVG } from 'components';
 
 // TODO maybe move it to old-school 'floating action button' in bottom right corner?
 export const AddNewGroupBtn = () => {
@@ -17,7 +18,7 @@ export const AddNewGroupBtn = () => {
         path={mdiPlus}
         size={1}
         className="inline-block -translate-y-[3px]"
-        aria-hidden="true"
+        {...SR_IGNORE_SVG}
       />
       <span>Add new group</span>
     </button>

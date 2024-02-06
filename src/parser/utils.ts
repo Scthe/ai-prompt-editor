@@ -132,8 +132,27 @@ export interface PromptAstTokenDiff {
   valueB?: PromptAstToken['resolvedWeight'];
 }
 
+export const getAstTokenDiffDelta = (item: PromptAstTokenDiff) => {
+  const has = (a: PromptAstTokenDiff['valueA']): a is number => a !== undefined;
+
+  if (!has(item.valueA) && has(item.valueB)) {
+    return 'added' as const;
+  }
+  if (has(item.valueA) && !has(item.valueB)) {
+    return 'removed' as const;
+  }
+  if (has(item.valueA) && has(item.valueB)) {
+    return item.valueB - item.valueA;
+  }
+  // both undefined?
+  return '-' as const;
+};
+
 /** Note: diffing if you have duplicates is hmm.. This case is ignored. */
-export const diffAstTrees = (treeA: PromptAstGroup, treeB: PromptAstGroup) => {
+export const diffAstTrees = (
+  treeA: PromptAstGroup,
+  treeB: PromptAstGroup
+): [PromptAstToken[], PromptAstTokenDiff[]] => {
   const allTokenNames: string[] = [];
 
   const createNameToNodeMap = (tree: PromptAstGroup) => {
@@ -153,15 +172,21 @@ export const diffAstTrees = (treeA: PromptAstGroup, treeB: PromptAstGroup) => {
   const mmapB = createNameToNodeMap(treeB);
   const uniqueTokenNames = unique(...allTokenNames).sort();
 
-  return uniqueTokenNames.reduce((acc, tokenName) => {
+  const changes: PromptAstTokenDiff[] = [];
+  const notChanged: PromptAstToken[] = [];
+
+  uniqueTokenNames.forEach((tokenName) => {
     const nodeA = mmapA.get(tokenName);
     const nodeB = mmapB.get(tokenName);
     const diff = diffAstTreeNodes(nodeA, nodeB);
     if (diff) {
-      acc.push(diff);
+      changes.push(diff);
+    } else if (nodeA || nodeB) {
+      notChanged.push(nodeA || nodeB!);
     }
-    return acc;
-  }, [] as PromptAstTokenDiff[]);
+  });
+
+  return [notChanged, changes];
 };
 
 const diffAstTreeNodes = (

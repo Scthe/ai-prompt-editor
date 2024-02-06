@@ -1,4 +1,5 @@
 import * as ExifReader from 'exifreader';
+import Tokenizer from 'parser/tokenizer';
 
 export interface AiImageExif {
   name: string;
@@ -59,27 +60,54 @@ export function parseAiParams(params: string): ExifAiParam | undefined {
   };
 }
 
-function parseSettings(text: string): ExifAiParam['settings'] {
+export function parseSettings(text: string) {
+  const GRAMMAR = {
+    STRING: /^["](.*?)["]/,
+    STRING_SINGLE: /^['](.*?)[']/,
+    CURLY_OBJ: /^[{](.*?)[}]/,
+    COMMA: /^,\s*/,
+    COLON: /^:\s*/,
+    WORD: /^[^"'{}:,]+/,
+  };
   const result: ExifAiParam['settings'] = {};
-  const setKV = (k: string, v?: string) => {
-    k = k.trim();
-    v = v === undefined ? '-' : v.trim();
-    if (k.length > 0) {
-      result[k] = v;
+  let key: string | undefined = undefined;
+
+  const setValue = (v: string) => {
+    if (key) {
+      result[key] = v.trim();
+      key = undefined;
+      return true;
     }
+    return false;
   };
 
-  text.split(',').forEach((part) => {
-    const idxCol = part.indexOf(':');
-    if (idxCol === -1) {
-      setKV(part);
-    } else {
-      // split would be easier, but there can be many ':' and it gets messy
-      const key = part.substring(0, idxCol);
-      const value = part.substring(idxCol + 1);
-      setKV(key, value);
+  const tokenizer = new Tokenizer(text, GRAMMAR);
+  while (tokenizer.hasMoreTokens()) {
+    const token = tokenizer.getNextToken();
+    if (!token) break;
+
+    switch (token.type) {
+      case 'STRING':
+      case 'STRING_SINGLE':
+      case 'CURLY_OBJ': {
+        const v = token.value;
+        setValue(v);
+        break;
+      }
+      case 'WORD': {
+        const v = token.value.trim();
+        if (!setValue(v)) {
+          key = v;
+        }
+        break;
+      }
+      case 'COMMA': {
+        key = undefined;
+        break;
+      }
+      case 'COLON':
     }
-  });
+  }
 
   return result;
 }

@@ -14,16 +14,15 @@ import { ModalController } from 'components';
 import { DeleteConfirmModal } from './deleteConfirmModal';
 import { Toggle } from 'components/toggle';
 import { GroupNameInput } from './groupNameInput';
+import { PromptTextRef } from 'components/promptInput';
 
-// TODO drag and drop
-// TODO editable title
-// TODO enable/disable
+// TODO NOW drag and drop
 export const PromptInputToolbar = ({
   group,
-  currentPromptRef,
+  promptTextRef,
 }: {
   group: EditorGroup;
-  currentPromptRef: React.MutableRefObject<string>;
+  promptTextRef: PromptTextRef;
 }) => {
   const { id: groupId, name } = group;
 
@@ -62,7 +61,7 @@ export const PromptInputToolbar = ({
         {/* copy btn */}
         <CopyToClipboardBtn
           id={groupId}
-          textRef={currentPromptRef}
+          textRef={promptTextRef}
           className={styles.toolbarIcon}
         />
 

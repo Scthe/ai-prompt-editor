@@ -63,3 +63,7 @@ export function safeJsonStringify(data: unknown, space?: number): string {
     space
   );
 }
+
+export type SortOrder = 'asc' | 'desc';
+export const oppositeSortOrder = (o: SortOrder) =>
+  o === 'asc' ? 'desc' : 'asc';

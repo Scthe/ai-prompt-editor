@@ -1,4 +1,4 @@
-import { Dialog, ModalController } from 'components';
+import { Dialog, ModalController, SR_IGNORE_SVG } from 'components';
 import React from 'react';
 import Icon from '@mdi/react';
 import { mdiDelete } from '@mdi/js';
@@ -27,7 +27,12 @@ export const DeleteConfirmModal = ({
     >
       <div className="px-10 pt-10">
         <p className="mb-8 text-3xl text-center">
-          <Icon path={mdiDelete} size={1.5} className="mx-auto mb-4" />
+          <Icon
+            path={mdiDelete}
+            size={1.5}
+            className="mx-auto mb-4"
+            {...SR_IGNORE_SVG}
+          />
           Permamently delete?
         </p>
 

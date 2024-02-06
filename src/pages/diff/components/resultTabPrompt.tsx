@@ -12,7 +12,7 @@ interface Props {
 export const ResultTabPrompt = ({ activeTab, data }: Props) => {
   const { image, result } = data;
   return (
-    <div className="max-w-screen-md px-2 pb-10 mx-auto">
+    <div className="max-w-screen-md px-2 pb-10 mx-auto text-gray-700">
       {/* key, cause <Prompt> can be.. resistant to changes */}
       <ImageSection key={activeTab} image={image} />
 

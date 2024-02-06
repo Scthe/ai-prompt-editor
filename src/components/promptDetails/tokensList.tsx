@@ -38,8 +38,8 @@ const TokenStr = ({ idx, token }: { token: GptToken; idx: number }) => {
     <span
       {...attribs}
       className={cx(
-        `${color} inline-block px-1 mb-1 text-zinc-900 relative hover:bg-white cursor-pointer`,
-        `hover:before:content-[attr(gpt4token)] before:absolute before:bottom-full before:left-0 before:bg-white hover:before:p-1`
+        `${color} inline-block px-1 mb-1 text-zinc-900 relative hover:bg-gray-200 cursor-pointer`,
+        `hover:before:content-[attr(gpt4token)] before:absolute before:bottom-full before:left-0 before:bg-gray-200 hover:before:p-1`
       )}
       // title={`GPT-4 token: ${token.token}`}
     >

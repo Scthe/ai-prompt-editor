@@ -16,7 +16,7 @@ export const CopyToClipboardBtn = ({
   className,
 }: {
   id: string;
-  textRef: React.MutableRefObject<string>;
+  textRef: React.MutableRefObject<string> | string;
   className?: string;
 }) => {
   const [state, setState] = useState<States>('idle');
@@ -24,7 +24,8 @@ export const CopyToClipboardBtn = ({
   const onCopyToClipboard = useCallback(async () => {
     if (state !== 'idle') return;
 
-    const copyOk = await copyToClipboard(textRef.current);
+    const text = typeof textRef === 'string' ? textRef : textRef.current;
+    const copyOk = await copyToClipboard(text);
     setState(copyOk ? 'success' : 'error');
 
     setTimeout(() => {

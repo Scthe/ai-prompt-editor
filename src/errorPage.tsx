@@ -3,7 +3,6 @@ import React from 'react';
 import { useRouteError } from 'react-router-dom';
 import cx from 'classnames';
 
-// TODO Add a button that moves back to homepage. I prod this will hopefully happen only when user navigated to `#/giberish`
 export default function ErrorPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const error = useRouteError() as any;
@@ -21,6 +20,15 @@ export default function ErrorPage() {
         <h1 className="mt-4 mb-4 text-4xl text-center">Error!</h1>
         <p className="mb-10 text-center">
           Sorry, an unexpected error has occurred.
+          <br />
+          Do you want to{' '}
+          <a
+            className="text-gray-700 transition-colors border-b-4 cursor-pointer hover:text-gray-900 hover:border-sky-500 border-sky-300"
+            href="/#"
+          >
+            go back
+          </a>
+          ?
         </p>
 
         <span className="block mb-1">Logs:</span>

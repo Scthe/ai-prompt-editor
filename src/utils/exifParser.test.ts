@@ -43,5 +43,26 @@ describe('exifParser', () => {
       expect(result?.negativePrompt).toEqual(NEGATIVE);
       expect(result?.settings).toEqual({});
     });
+
+    test('allows nested settings objects', () => {
+      const settingsStr = `Steps: 50, Sampler: Euler a, Hires upscaler: 4x-UltraSharp,ADetailer dilate/erode: 4, Lora hashes: "XenoDetailer: e73f1b0f16e6", TI hashes: "ng_deepnegative_v1_75t: 54e7e4826d53, badhandv4: 5e40d722fc3d, verybadimagenegative_v1.3: d70463f87042, easynegative: c74b4e810b03", Version: v1.6.0, Hashes: {"lora:XenoDetailer": "1e34248e31", "model": "8d1fbf59b0"}`;
+      const text = `${POSITIVE}\n${NEGATIVE_PROMPT_START} ${NEGATIVE}\n${settingsStr}`;
+
+      const result = parseAiParams(text);
+
+      expect(result?.positivePrompt).toEqual(POSITIVE);
+      expect(result?.negativePrompt).toEqual(NEGATIVE);
+      expect(result?.settings).toEqual({
+        Steps: '50',
+        Sampler: 'Euler a',
+        'Hires upscaler': '4x-UltraSharp',
+        'Lora hashes': '"XenoDetailer: e73f1b0f16e6"',
+        'TI hashes':
+          '"ng_deepnegative_v1_75t: 54e7e4826d53, badhandv4: 5e40d722fc3d, verybadimagenegative_v1.3: d70463f87042, easynegative: c74b4e810b03"',
+        Version: 'v1.6.0',
+        Hashes: '{"lora:XenoDetailer": "1e34248e31", "model": "8d1fbf59b0"}',
+        'ADetailer dilate/erode': '4',
+      });
+    });
   });
 });

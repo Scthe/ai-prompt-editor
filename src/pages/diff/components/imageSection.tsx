@@ -1,9 +1,11 @@
 import React from 'react';
+import cx from 'classnames';
 import { PromptImage } from './imageSelector';
 import { SectionHeader } from './text';
 import { Bold, Title } from './text';
 import { formatBytes } from 'utils';
 import { PromptInput } from 'components/promptInput';
+import { CopyToClipboardBtn } from 'components';
 
 interface Props {
   image?: PromptImage;
@@ -30,41 +32,35 @@ export const ImageSection = ({ image }: Props) => {
   const settingKeys = Object.keys(settings).sort();
 
   return (
-    <div>
+    <div className="">
       <Title>Image</Title>
-      <p className="mb-6 text-base text-gray-700">
+      <p className="mb-6 text-base ">
         Image <Bold quotes>{name}</Bold> with type <Bold quotes>{type}</Bold>,
         and size <Bold>{formatBytes(size, 2)}</Bold>. {sizeStr}
       </p>
 
-      {/* TODO copy to clipboard? */}
-      <SectionHeader>Positive Prompt</SectionHeader>
-      <PromptInput
-        initialPrompt={image.aiParams.positivePrompt}
-        onPromptChanged={() => undefined}
-        className="mb-4"
-        withBorder
-        disabled
+      <ImagePrompt
+        id="prompt-positive"
+        sectionName="Positive Prompt"
+        prompt={image.aiParams.positivePrompt}
       />
 
-      {/* TODO copy to clipboard? */}
-      <SectionHeader>Negative Prompt</SectionHeader>
-      <PromptInput
-        initialPrompt={image.aiParams.negativePrompt}
-        onPromptChanged={() => undefined}
-        className="mb-4"
-        withBorder
-        disabled
+      <ImagePrompt
+        id="prompt-negative"
+        sectionName="Negative Prompt"
+        prompt={image.aiParams.negativePrompt}
       />
 
       <SectionHeader>Model settings</SectionHeader>
       <div className="grid grid-cols-2">
         {settingKeys.map((key, idx) => {
-          const isOddRow = Boolean(idx % 2);
+          const bgGrey = idx % 2 === 0;
           return (
             <React.Fragment key={key}>
-              <div className={isOddRow ? 'bg-gray-200' : ''}>{key}</div>
-              <div className={isOddRow ? 'bg-gray-200' : ''}>
+              <div className={cx('px-2 py-1', bgGrey ? 'bg-gray-200' : '')}>
+                {key}
+              </div>
+              <div className={cx('px-2 py-1', bgGrey ? 'bg-gray-200' : '')}>
                 {settings[key]}
               </div>
             </React.Fragment>
@@ -74,5 +70,30 @@ export const ImageSection = ({ image }: Props) => {
 
       {/* <Debug data={image} /> */}
     </div>
+  );
+};
+
+const ImagePrompt = ({
+  id,
+  prompt,
+  sectionName,
+}: {
+  id: string;
+  prompt: string;
+  sectionName: string;
+}) => {
+  return (
+    <>
+      <SectionHeader actions={<CopyToClipboardBtn id={id} textRef={prompt} />}>
+        {sectionName}
+      </SectionHeader>
+      <PromptInput
+        initialPrompt={prompt}
+        onPromptChanged={() => undefined}
+        className="mb-8"
+        withBorder
+        disabled
+      />
+    </>
   );
 };

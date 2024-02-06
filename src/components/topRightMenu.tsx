@@ -2,6 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import Icon from '@mdi/react';
 import { mdiArrowRight } from '@mdi/js';
+import { SR_IGNORE_SVG } from 'components';
 
 type TargetPage = 'diff' | 'editor';
 
@@ -27,6 +28,7 @@ export const TopRightMenu = ({ targetPage }: { targetPage: TargetPage }) => {
             path={mdiArrowRight}
             size={1}
             className="inline-block ml-2 -translate-y-[2px]"
+            {...SR_IGNORE_SVG}
           />
         </a>
       </div>

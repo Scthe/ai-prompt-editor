@@ -6,16 +6,12 @@ import { PromptImage } from './components/imageSelector';
 import { ResultCard } from './components/resultCard';
 
 const INITIAL_BEFORE =
-  'masterpiece, ((best quality)), (super prompt: 1.3), <lora:testLora:2.0>';
+  'masterpiece, ((best quality)), (super prompt: 1.3), <lora:testLora:2.0> removedOne';
 const INITIAL_AFTER =
-  'masterpiece, (best quality), (super prompt: 1.1), <lora:testLora:0.3>';
+  'masterpiece, (best quality), (super prompt: 1.1), <lora:testLora:0.3> newOne';
 
 // TODO add some page <h1> title and explanation what this tool is
-// TODO main area has tabs - if uploaded image, can switch to 'All Exif from img A'
-// TODO compare settings too? Sampler/Steps/CFG etc.
 // TODO both prompts have own color scheme? left-sky, right-pink
-// TODO mode to show ones that did not change?
-// TODO handle no difference
 // TODO swap?
 export default function DiffPage() {
   const promptA = useDiffPrompt(INITIAL_BEFORE);
