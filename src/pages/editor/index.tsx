@@ -1,52 +1,35 @@
-import React, { useState } from 'react';
-import { EditorGroupId, ScreenMode } from './types';
+import React, { useCallback, useState } from 'react';
+import cx from 'classnames';
+import { ScreenMode } from './types';
 import { ScreenModeSwitcher } from './components/screenModeSwitcher';
-import { useParsedPrompt } from 'hooks/useParsedPrompt';
-import { DetailsCard } from './components/detailsCard';
-import { PromptInputCard } from './components/promptInputCard';
-import { useAllEditorGroups, useEditorGroup } from 'pages/editor/editorStore';
-import { AddNewGroupBtn } from './components/addNewGroupBtn';
 import { TopRightMenu } from 'components';
+import EditorScreen from './editorScreen';
+import ResultScreen from './resultScreen';
+import { persistCurrentPromptsAsInitial } from './editorStore';
 
 export default function EditorPage() {
   const [activeScreen, setActiveScreen] = useState<ScreenMode>('editor');
 
-  const groupIds = useAllEditorGroups();
+  const setActiveScreenWithExtras = useCallback((nextMode: ScreenMode) => {
+    setActiveScreen(nextMode);
+    persistCurrentPromptsAsInitial();
+  }, []);
 
   return (
-    <main className="relative max-w-screen-xl min-h-screen px-2 pt-20 pb-8 mx-auto md:px-4">
+    <main
+      className={cx(
+        'relative max-w-screen-xl min-h-screen mx-auto',
+        'px-2 md:px-4 pt-20 pb-12'
+      )}
+    >
       <TopRightMenu targetPage="diff" />
 
       <ScreenModeSwitcher
         activeMode={activeScreen}
-        onModeSwitch={setActiveScreen}
+        onModeSwitch={setActiveScreenWithExtras}
       />
 
-      <div className="grid mb-6 md:grid-cols-2 gap-x-4 gap-y-6">
-        {groupIds.map((id) => (
-          <PromptCards key={id} groupId={id} />
-        ))}
-      </div>
-
-      <AddNewGroupBtn />
+      {activeScreen === 'editor' ? <EditorScreen /> : <ResultScreen />}
     </main>
   );
 }
-
-const PromptCards = ({ groupId }: { groupId: EditorGroupId }) => {
-  const group = useEditorGroup(groupId);
-  const { isParsing, parsePrompt, result } = useParsedPrompt(
-    group?.initialPrompt || ''
-  );
-
-  if (!group) {
-    return;
-  }
-
-  return (
-    <>
-      <PromptInputCard group={group} parsePrompt={parsePrompt} />
-      <DetailsCard group={group} isParsing={isParsing} data={result} />
-    </>
-  );
-};

@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import {
-  DetailsTab,
-  EMPTY_GROUP_PARSING_RESULT,
-  GroupParsingResult,
-} from 'pages/editor/types';
+import { DetailsTab, GroupParsingResult } from 'pages/editor/types';
 import { Title } from './text';
 import { PromptDetailsContent } from 'components/promptDetails/promptDetailsContent';
 import { PromptDetailsTabs } from 'components/promptDetails/promptDetailsTabs';
@@ -31,10 +27,7 @@ export const PromptDetails = ({ prompt }: Props) => {
         className="mb-8"
       />
 
-      <PromptDetailsContent
-        activeTab={tab}
-        data={prompt || EMPTY_GROUP_PARSING_RESULT}
-      />
+      <PromptDetailsContent activeTab={tab} data={prompt} />
     </div>
   );
 };

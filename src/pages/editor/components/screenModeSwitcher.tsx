@@ -11,7 +11,7 @@ export const ScreenModeSwitcher = ({
 }) => {
   const modes = ['editor', 'result'] as const;
   return (
-    <div className="fixed mb-6 text-base -translate-x-1/2 left-1/2 top-4">
+    <div className="fixed z-50 text-base -translate-x-1/2 left-1/2 top-4">
       <div className="relative grid grid-cols-2 overflow-hidden text-gray-900 capitalize rounded-full shadow-xl w-fit bg-zinc-100">
         <div
           className={cx(

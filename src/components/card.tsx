@@ -10,18 +10,24 @@ export const Card = ({
   borderTopOnMobile,
   children,
 }: PropsWithChildren<{
-  shadowDirection?: 'left' | 'right';
+  shadowDirection?: 'left' | 'right' | 'top';
   shadowColor?: string;
   className?: string;
   borderTopOnMobile?: boolean;
 }>) => {
   const shadowSize = 8;
+  const shadowX: Record<string, string | undefined> = {
+    left: `-${shadowSize}px`,
+    right: `${shadowSize}px`,
+    top: '0px',
+  };
+
   const style = {
-    '--shadow-x':
-      shadowDirection === 'left' ? `-${shadowSize}px` : `${shadowSize}px`,
+    '--shadow-x': shadowX[shadowDirection || ''],
     '--shadow-y': `-${shadowSize}px`,
     '--shadow-col': shadowColor,
   } as React.CSSProperties;
+
   return (
     <div
       style={style}

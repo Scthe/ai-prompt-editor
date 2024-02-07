@@ -15,12 +15,15 @@
     "preview": "yarn build && http-server build",
     "clean": "rimraf ./build/* || true",
     "lint": "eslint -c .eslintrc.json --ext .jsx,.js,.tsx,.ts src",
-    "test": "yarn jest"
+    "ts-dry": "yarn tsc",
+    "test": "yarn jest",
+    "test:w": "yarn jest --watch"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",
     "classnames": "^2.5.1",
+    "debounce": "^2.0.0",
     "exifreader": "^4.21.0",
     "framer-motion": "^11.0.3",
     "js-tiktoken": "^1.0.10",

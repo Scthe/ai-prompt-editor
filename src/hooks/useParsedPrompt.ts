@@ -4,6 +4,7 @@ import { parsePrompt } from '../parser';
 import { useEffectOnce } from './useEffectOnce';
 import { tokenizeGpt4 } from 'utils/gpt4Tokenizer';
 import { GroupParsingResult } from 'pages/editor/types';
+import { useLatest } from '../../_references/hooks/useLatest';
 
 const PARSE_DEBOUNCE_MS = 2000;
 
@@ -12,7 +13,8 @@ export type ParsePromptFn = (newPrompt: string) => void;
 export interface ParsedPrompt {
   isParsing: boolean;
   result: GroupParsingResult | undefined;
-  parsePrompt: ParsePromptFn;
+  parsePromptDebounced: ParsePromptFn;
+  parsePromptImmediately: ParsePromptFn;
 }
 
 export const parseAndTokenize = (text: string): GroupParsingResult => {
@@ -21,37 +23,54 @@ export const parseAndTokenize = (text: string): GroupParsingResult => {
   return { ast, messages, tokens };
 };
 
-export const useParsedPrompt = (initialPrompt: string): ParsedPrompt => {
+export const useParsedPrompt = (): ParsedPrompt => {
   const [isParsing, setIsParsing] = useState(true);
-  const [parsingResult, setParsingResult] = useState<
-    GroupParsingResult | undefined
-  >(undefined);
+  const [result, setParsingResult] = useState<GroupParsingResult | undefined>(
+    undefined
+  );
 
-  // set initial
-  useEffectOnce(() => {
-    // `setTimeout` is needed as React tries to optimize layouts change.
-    // So, when user adds a new group, React waits for parsing to be done
-    // before new group is shown to the user. This takes a second or two.
-    setTimeout(() => {
-      const result = parseAndTokenize(initialPrompt);
-      setParsingResult(result);
-      setIsParsing(false);
-    }, 0);
-  });
-
-  const parseNewPrompt = useDebouncedCallback((newPrompt: string) => {
+  const parsePromptDebounced = useDebouncedCallback((newPrompt: string) => {
     const result = parseAndTokenize(newPrompt);
     setParsingResult(result);
     setIsParsing(false);
   }, PARSE_DEBOUNCE_MS);
 
-  const onPromptChanged = useCallback(
+  const parsePromptWrapper = useCallback(
     (newPrompt: string) => {
       setIsParsing(true);
-      parseNewPrompt(newPrompt);
+      parsePromptDebounced(newPrompt);
     },
-    [parseNewPrompt]
+    [parsePromptDebounced]
   );
 
-  return { isParsing, result: parsingResult, parsePrompt: onPromptChanged };
+  const debouncedFnCtrl = useLatest(parsePromptDebounced);
+  const parsePromptImmediately = useCallback(
+    (text: string) => {
+      debouncedFnCtrl?.current?.cancel?.();
+
+      const result = parseAndTokenize(text);
+      setParsingResult(result);
+      setIsParsing(false);
+    },
+    [debouncedFnCtrl]
+  );
+
+  return {
+    isParsing,
+    result,
+    parsePromptDebounced: parsePromptWrapper,
+    parsePromptImmediately,
+  };
+};
+
+/** One time operation for intial value */
+export const useSetInitialPrompt = (p: ParsedPrompt, initialPrompt: string) => {
+  useEffectOnce(() => {
+    // `setTimeout` is needed as React tries to optimize layouts change.
+    // So, when user adds a new group, React waits for parsing to be done
+    // before new group is shown to the user. This takes a second or two.
+    setTimeout(() => {
+      p.parsePromptImmediately(initialPrompt);
+    }, 0);
+  });
 };

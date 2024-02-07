@@ -218,5 +218,29 @@ const diffAstTreeNodes = (
 export const hasNoChildren = (astGroup: PromptAstGroup) =>
   astGroup.children.length === 0;
 
-// TODO remember to close all remaining params after each group!
-// export const mergeAstTrees = (...astGroups: PromptAstGroup) => ...
+/*
+// Remember to close all remaining params after each group!
+export const mergeAstTrees = (...astGroups: PromptAstGroup[]) => {
+  const newRoot = newAstGroup(undefined, 'curly_bracket');
+
+  astGroups.forEach((astGroup) => {
+    newRoot.children.push(...astGroup.children);
+  });
+
+  return newRoot;
+};
+
+export const generatePrompt = (root: PromptAstGroup,acc:string) => {
+  const bracketOpen = getBracketsString(root,'open');
+  const bracketClose = getBracketsString(root,'close');
+
+  if(!isRootNode(root)) {
+    acc +=
+  }
+
+  // astGroups.forEach((astGroup) => {
+    // newRoot.children.push(...astGroup.children);
+  // });
+
+};
+*/

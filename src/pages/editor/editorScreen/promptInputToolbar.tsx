@@ -43,7 +43,7 @@ export const PromptInputToolbar = ({
   );
 
   return (
-    <CardToolbar className="flex items-center justify-between px-2">
+    <CardToolbar childrenPos="apart">
       {/* left side */}
       <div className="grow">
         <GroupNameInput group={group} />
@@ -65,7 +65,7 @@ export const PromptInputToolbar = ({
           className={styles.toolbarIcon}
         />
 
-        {/* close btn */}
+        {/* delete btn */}
         <IconButton
           id={`delete-btn-${groupId}`}
           srLabel="Delete prompt group"

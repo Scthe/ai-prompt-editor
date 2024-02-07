@@ -1,5 +1,5 @@
 import { TopRightMenu } from 'components';
-import { useParsedPrompt } from 'hooks/useParsedPrompt';
+import { useParsedPrompt, useSetInitialPrompt } from 'hooks/useParsedPrompt';
 import React, { useCallback, useState } from 'react';
 import { DiffInputCard } from './components/diffInputCard';
 import { PromptImage } from './components/imageSelector';
@@ -45,8 +45,10 @@ export default function DiffPage() {
 const useDiffPrompt = (intialPrompt: string) => {
   const [lastResetPrompt, setLastResetPrompt] = useState<string>(intialPrompt);
 
-  const prompt = useParsedPrompt(intialPrompt);
-  const { parsePrompt } = prompt;
+  const parsedPrompt = useParsedPrompt();
+  useSetInitialPrompt(parsedPrompt, intialPrompt);
+
+  const { parsePromptImmediately } = parsedPrompt;
 
   const [image, setImage] = useState<PromptImage | undefined>(undefined);
   const onImageSelected = useCallback(
@@ -54,19 +56,19 @@ const useDiffPrompt = (intialPrompt: string) => {
       if (file) {
         setLastResetPrompt(file.aiParams.positivePrompt);
         setImage(file);
-        parsePrompt(file.aiParams.positivePrompt);
+        parsePromptImmediately(file.aiParams.positivePrompt);
       } else {
         setImage(undefined);
         // leave prompt based on image
       }
     },
-    [parsePrompt]
+    [parsePromptImmediately]
   );
 
   return {
     lastResetPrompt,
     image,
     onImageSelected,
-    ...prompt,
+    ...parsedPrompt,
   };
 };

@@ -7,6 +7,7 @@ import {
   EditorGroupId,
   newGroup,
 } from 'pages/editor/types';
+import debounce from 'debounce';
 
 const INITIAL_STATE: EditorGroup[] = [
   {
@@ -81,4 +82,24 @@ const mapWithChange = (
   cb: (gr: EditorGroup) => EditorGroup
 ) => {
   return groups.map((g) => (g.id === id ? cb(g) : g));
+};
+
+const storeCurrentTextNow = (groupId: EditorGroupId, text: string) => {
+  const group = useEditorGroupsStore
+    .getState()
+    .groups.find((g) => g.id === groupId);
+  if (group) {
+    group.currentPrompt = text;
+  }
+};
+
+export const storeCurrentText = debounce(storeCurrentTextNow, 1000);
+
+export const persistCurrentPromptsAsInitial = () => {
+  const groups = useEditorGroupsStore.getState().groups;
+  groups.forEach((g) => {
+    if (g.currentPrompt !== undefined) {
+      g.initialPrompt = g.currentPrompt;
+    }
+  });
 };

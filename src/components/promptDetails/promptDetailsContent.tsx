@@ -1,5 +1,9 @@
 import React from 'react';
-import { DetailsTab, GroupParsingResult } from '../../pages/editor/types';
+import {
+  DetailsTab,
+  EMPTY_GROUP_PARSING_RESULT,
+  GroupParsingResult,
+} from '../../pages/editor/types';
 import {
   AstListRenderer,
   AstRenderer,
@@ -9,12 +13,14 @@ import {
 
 interface Props {
   activeTab: DetailsTab;
-  data: GroupParsingResult;
+  data: GroupParsingResult | undefined;
 }
 
 // TODO <TokensList insertBreak /> to auto add BREAK?
 // TODO add optimize feature that removes duplicates? And flattens the prompt?
 export const PromptDetailsContent = ({ activeTab, data }: Props) => {
+  data = data || EMPTY_GROUP_PARSING_RESULT;
+
   switch (activeTab) {
     case 'list':
       return <AstListRenderer astGroup={data.ast} />;

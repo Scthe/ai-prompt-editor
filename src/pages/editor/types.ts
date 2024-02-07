@@ -26,7 +26,14 @@ export interface EditorGroup {
   enabled: boolean;
   initialPrompt: string;
   tab: DetailsTab;
+  /**
+   * WARNING: This field is not updated through Zustand!
+   * It's updated after each (debounced) keystroke instead
+   */
+  currentPrompt?: string;
 }
+export const getCurrentPrompt = (g: EditorGroup | undefined) =>
+  g?.currentPrompt || g?.initialPrompt || '';
 
 export const newGroup = (): EditorGroup => ({
   id: generateId(),

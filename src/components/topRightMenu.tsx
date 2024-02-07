@@ -15,7 +15,7 @@ export const TopRightMenu = ({ targetPage }: { targetPage: TargetPage }) => {
   const { label, href } = PerPageData[targetPage];
 
   return (
-    <div className="fixed top-0 right-0">
+    <div className="fixed top-0 right-0 z-50">
       <div className="relative text-gray-900 capitalize shadow-xl rounded-bl-md w-fit bg-zinc-100">
         <a
           href={href}

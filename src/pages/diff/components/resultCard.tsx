@@ -1,4 +1,4 @@
-import { Card, CardContent, TabDef, Tabs } from 'components';
+import { Card, CardContent, CardToolbar, TabDef, Tabs } from 'components';
 import { ParsedPrompt } from 'hooks/useParsedPrompt';
 import React, { useState } from 'react';
 import { PromptImage } from './imageSelector';
@@ -28,10 +28,10 @@ export const ResultCard = (props: ResultCardProps) => {
   const [activeTab, setActiveTab] = useState<DiffTab>('diff');
 
   return (
-    <Card shadowColor="transparent" className="h-fit" borderTopOnMobile>
+    <Card shadowDirection="top" className="h-fit" borderTopOnMobile>
       {isLoading ? <PromptLoader /> : undefined}
 
-      <CardContent className="md:pb-6 md:px-6">
+      <CardToolbar>
         <Tabs
           id={`diff-tabs`}
           activeTab={activeTab}
@@ -39,7 +39,9 @@ export const ResultCard = (props: ResultCardProps) => {
           onTabSwitch={setActiveTab}
           className="mb-8"
         />
+      </CardToolbar>
 
+      <CardContent isAlwaysFullWidth>
         <ResultContent {...props} activeTab={activeTab} />
       </CardContent>
     </Card>

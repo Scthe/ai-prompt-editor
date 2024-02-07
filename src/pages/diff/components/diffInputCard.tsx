@@ -25,7 +25,7 @@ export const DiffInputCard = ({
       className="h-fit"
       borderTopOnMobile
     >
-      <CardContent>
+      <CardContent className="pb-4">
         <Title center>Prompt {id === 'before' ? 'before' : 'after'}</Title>
 
         <ImageSelector
@@ -44,13 +44,10 @@ export const DiffInputCard = ({
         >
           Text prompt
         </SectionHeader>
+
         <PromptInput
-          // key used to rerender after image resets the `initialPrompt`
-          key={initialPrompt}
           initialPrompt={initialPrompt}
-          onPromptChanged={prompt.parsePrompt}
-          className="mb-4"
-          withBorder
+          onPromptChanged={prompt.parsePromptDebounced}
           textRef={promptTextRef}
         />
       </CardContent>

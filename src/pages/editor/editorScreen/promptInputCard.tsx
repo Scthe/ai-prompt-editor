@@ -11,7 +11,6 @@ interface Props {
 }
 
 export const PromptInputCard = ({ group, parsePrompt }: Props) => {
-  const { initialPrompt } = group;
   const promptTextRef = usePromptTextRef();
 
   return (
@@ -24,7 +23,7 @@ export const PromptInputCard = ({ group, parsePrompt }: Props) => {
       <PromptInputToolbar group={group} promptTextRef={promptTextRef} />
       <CardContent>
         <PromptInput
-          initialPrompt={initialPrompt}
+          initialPrompt={group.initialPrompt}
           onPromptChanged={parsePrompt}
           textRef={promptTextRef}
         />

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import cx from 'classnames';
 import Editor from 'react-simple-code-editor';
 import 'prismjs/themes/prism.css';
@@ -43,10 +43,29 @@ export function PromptInput({
   textRef,
 }: Props) {
   const [code, setCode] = React.useState(initialPrompt);
-
+  // update ref to latest value. It's ref, so will not force rerenders
   if (textRef) {
     textRef.current = code;
   }
+
+  const onValueChange = useCallback(
+    (code: string) => {
+      setCode(code);
+      onPromptChanged(code);
+    },
+    [onPromptChanged]
+  );
+
+  const lastInitialPromptRef = useRef(initialPrompt);
+  useEffect(() => {
+    if (lastInitialPromptRef.current !== initialPrompt) {
+      // console.warn(
+      // `PromptInput.initialPrompt has changed! This is OK, but there are only a few valid reasons for this (image upload in diff, groups change in editor result etc.).`
+      // );
+      lastInitialPromptRef.current = initialPrompt;
+      onValueChange(initialPrompt);
+    }
+  }, [initialPrompt, onValueChange]);
 
   return (
     <div
@@ -58,12 +77,9 @@ export function PromptInput({
       <Editor
         disabled={disabled}
         value={code}
-        onValueChange={(code) => {
-          setCode(code);
-          onPromptChanged(code);
-        }}
+        onValueChange={onValueChange}
         highlight={(code) => highlight(code, PRISMJS_GRAMMAR, 'js')}
-        padding={10}
+        padding={withBorder ? 10 : 0}
         style={{
           fontFamily: 'monospace',
           fontSize: 14,

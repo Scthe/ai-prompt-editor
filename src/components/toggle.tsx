@@ -5,10 +5,17 @@ interface Props {
   id: string;
   srLabel: string;
   checked: boolean;
+  className?: string;
   onChecked: (next: boolean) => void;
 }
 
-export const Toggle = ({ id, srLabel, checked, onChecked }: Props) => {
+export const Toggle = ({
+  id,
+  srLabel,
+  checked,
+  className,
+  onChecked,
+}: Props) => {
   const onChange = useCallback(
     (e: ChangeEvent) => {
       e.preventDefault();
@@ -25,7 +32,9 @@ export const Toggle = ({ id, srLabel, checked, onChecked }: Props) => {
   return (
     <label
       htmlFor={id}
-      className="flex items-center cursor-pointer select-none group"
+      className={cx(
+        `flex items-center cursor-pointer select-none group ${className}`
+      )}
     >
       <div className="relative">
         <input
@@ -37,8 +46,10 @@ export const Toggle = ({ id, srLabel, checked, onChecked }: Props) => {
         />
         <div
           className={cx(
-            'block h-8 transition-colors rounded-full  w-14 group-hover:bg-sky-400',
-            checked ? 'bg-sky-500' : 'bg-gray-500'
+            'block h-8 transition-colors rounded-full w-14',
+            checked
+              ? 'bg-sky-500 group-hover:bg-sky-400'
+              : 'bg-gray-500 group-hover:bg-gray-400'
           )}
         ></div>
         <div

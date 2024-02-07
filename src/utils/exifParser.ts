@@ -65,9 +65,10 @@ export function parseSettings(text: string) {
     STRING: /^["](.*?)["]/,
     STRING_SINGLE: /^['](.*?)[']/,
     CURLY_OBJ: /^[{](.*?)[}]/,
+    SQUARE_OBJ: /^[[](.*?)[\]]/,
     COMMA: /^,\s*/,
     COLON: /^:\s*/,
-    WORD: /^[^"'{}:,]+/,
+    WORD: /^[^"'{}:,[\]]+/,
   };
   const result: ExifAiParam['settings'] = {};
   let key: string | undefined = undefined;
@@ -82,31 +83,36 @@ export function parseSettings(text: string) {
   };
 
   const tokenizer = new Tokenizer(text, GRAMMAR);
-  while (tokenizer.hasMoreTokens()) {
-    const token = tokenizer.getNextToken();
-    if (!token) break;
+  try {
+    while (tokenizer.hasMoreTokens()) {
+      const token = tokenizer.getNextToken();
+      if (!token) break;
 
-    switch (token.type) {
-      case 'STRING':
-      case 'STRING_SINGLE':
-      case 'CURLY_OBJ': {
-        const v = token.value;
-        setValue(v);
-        break;
-      }
-      case 'WORD': {
-        const v = token.value.trim();
-        if (!setValue(v)) {
-          key = v;
+      switch (token.type) {
+        case 'STRING':
+        case 'STRING_SINGLE':
+        case 'SQUARE_OBJ':
+        case 'CURLY_OBJ': {
+          const v = token.value;
+          setValue(v);
+          break;
         }
-        break;
+        case 'WORD': {
+          const v = token.value.trim();
+          if (!setValue(v)) {
+            key = v;
+          }
+          break;
+        }
+        case 'COMMA': {
+          key = undefined;
+          break;
+        }
+        case 'COLON':
       }
-      case 'COMMA': {
-        key = undefined;
-        break;
-      }
-      case 'COLON':
     }
+  } catch (e) {
+    console.error('Exif settings parse error:', e);
   }
 
   return result;
