@@ -1,8 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { parsePrompt } from '../parser';
 import { useEffectOnce } from './useEffectOnce';
-import { tokenizeGpt4 } from 'utils/gpt4Tokenizer';
 import { GroupParsingResult } from 'pages/editor/types';
 import { useLatest } from '../../_references/hooks/useLatest';
 
@@ -17,10 +15,34 @@ export interface ParsedPrompt {
   parsePromptImmediately: ParsePromptFn;
 }
 
-export const parseAndTokenize = (text: string): GroupParsingResult => {
-  const [ast, messages] = parsePrompt(text);
-  const tokens = tokenizeGpt4(ast);
-  return { ast, messages, tokens };
+export const parseAndTokenize = async (
+  text: string
+): Promise<GroupParsingResult> => {
+  let resolve: (
+    value: GroupParsingResult | PromiseLike<GroupParsingResult>
+  ) => void;
+  let reject: (reason?: unknown) => void;
+
+  const promise = new Promise<GroupParsingResult>((resolve_, reject_) => {
+    resolve = resolve_;
+    reject = reject_;
+  });
+
+  const worker = new window.Worker('workers/parseAndTokenize.js');
+  // console.log('Client.send', [text]);
+  worker.postMessage(text);
+  worker.onerror = (err) => {
+    // console.log('Client.error', err);
+    reject(err);
+    worker.terminate();
+  };
+  worker.onmessage = (e) => {
+    // console.log('Client.rcv', e);
+    resolve(e.data);
+    worker.terminate();
+  };
+
+  return promise;
 };
 
 export const useParsedPrompt = (): ParsedPrompt => {
@@ -29,11 +51,14 @@ export const useParsedPrompt = (): ParsedPrompt => {
     undefined
   );
 
-  const parsePromptDebounced = useDebouncedCallback((newPrompt: string) => {
-    const result = parseAndTokenize(newPrompt);
-    setParsingResult(result);
-    setIsParsing(false);
-  }, PARSE_DEBOUNCE_MS);
+  const parsePromptDebounced = useDebouncedCallback(
+    async (newPrompt: string) => {
+      const result = await parseAndTokenize(newPrompt);
+      setParsingResult(result);
+      setIsParsing(false);
+    },
+    PARSE_DEBOUNCE_MS
+  );
 
   const parsePromptWrapper = useCallback(
     (newPrompt: string) => {
@@ -45,10 +70,10 @@ export const useParsedPrompt = (): ParsedPrompt => {
 
   const debouncedFnCtrl = useLatest(parsePromptDebounced);
   const parsePromptImmediately = useCallback(
-    (text: string) => {
+    async (text: string) => {
       debouncedFnCtrl?.current?.cancel?.();
 
-      const result = parseAndTokenize(text);
+      const result = await parseAndTokenize(text);
       setParsingResult(result);
       setIsParsing(false);
     },
@@ -66,11 +91,6 @@ export const useParsedPrompt = (): ParsedPrompt => {
 /** One time operation for intial value */
 export const useSetInitialPrompt = (p: ParsedPrompt, initialPrompt: string) => {
   useEffectOnce(() => {
-    // `setTimeout` is needed as React tries to optimize layouts change.
-    // So, when user adds a new group, React waits for parsing to be done
-    // before new group is shown to the user. This takes a second or two.
-    setTimeout(() => {
-      p.parsePromptImmediately(initialPrompt);
-    }, 0);
+    p.parsePromptImmediately(initialPrompt);
   });
 };

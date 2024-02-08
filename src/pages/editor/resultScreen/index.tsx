@@ -7,6 +7,7 @@ import useEditorGroupsStore from '../editorStore';
 import { getCurrentPrompt } from '../types';
 
 // TODO show how BREAK is auto-placed?
+// TODO when result prompt is empty - it looks weird (paddings etc)
 export default function ResultScreen() {
   const initialPrompt = useMergedResultPromptText();
 

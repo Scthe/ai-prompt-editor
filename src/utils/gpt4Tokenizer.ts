@@ -6,13 +6,15 @@ export interface GptToken {
   text: string;
 }
 
-// TODO [CRITICAL] this fn is EXTREMELY slow! Either lazy call it, or Promise
-/** Warning, this function is SLOW! */
-export function tokenizeGpt4(astRoot: PromptAstGroup): GptToken[] {
+/**
+ * Warning, this function is SLOW!
+ * Returns `Promise<>` to force you to handle this. And prevent blocking render thread.
+ */
+export function tokenizeGpt4(astRoot: PromptAstGroup): Promise<GptToken[]> {
   const astTokens = flattenAstTree(astRoot).filter((t) => !t.isLora);
   const text = astTokens.map((t) => t.value).join(',');
-
-  return getTokens(text);
+  const tokens = getTokens(text);
+  return Promise.resolve(tokens);
 }
 
 /**
