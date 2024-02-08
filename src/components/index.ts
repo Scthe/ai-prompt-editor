@@ -6,6 +6,7 @@ export * from './centeredMain';
 export * from './copyToClipboardBtn';
 export * from './debug';
 export * from './dialog';
+export * from './dragHandle';
 export * from './iconButton';
 export * from './icons';
 export * from './loaders';

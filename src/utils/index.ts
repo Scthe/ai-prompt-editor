@@ -67,3 +67,10 @@ export function safeJsonStringify(data: unknown, space?: number): string {
 export type SortOrder = 'asc' | 'desc';
 export const oppositeSortOrder = (o: SortOrder) =>
   o === 'asc' ? 'desc' : 'asc';
+
+export function arrayMove<T>(arr: T[], fromIndex: number, toIndex: number) {
+  toIndex = Math.min(arr.length - 1, toIndex);
+  const newArr = [...arr];
+  newArr.splice(toIndex, 0, newArr.splice(fromIndex, 1)[0]);
+  return newArr;
+}

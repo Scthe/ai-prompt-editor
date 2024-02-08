@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { logger } from 'utils';
+import { logger, arrayMove } from 'utils';
 import {
   DetailsTab,
   EditorGroup,
@@ -20,6 +20,14 @@ const INITIAL_STATE: EditorGroup[] = [
     tab: 'messages',
     enabled: false,
   },
+  {
+    ...newGroup(),
+    name: 'Test group 2',
+  },
+  {
+    ...newGroup(),
+    name: 'Test group 3',
+  },
 ];
 
 interface EditorState {
@@ -29,6 +37,10 @@ interface EditorState {
   setDetailsTab: (id: EditorGroupId, tab: DetailsTab) => void;
   setGroupEnabled: (id: EditorGroupId, isEnabled: boolean) => void;
   setName: (id: EditorGroupId, name: string) => void;
+  // dragging:
+  draggedGroup: EditorGroupId | undefined;
+  setDraggedGroup: (id: EditorGroupId | undefined) => void;
+  moveGroup: (id: EditorGroupId, draggedOverId: EditorGroupId) => void;
 }
 
 const useEditorGroupsStore = create<EditorState>(
@@ -62,6 +74,20 @@ const useEditorGroupsStore = create<EditorState>(
           groups: mapWithChange(groups, id, (g) => ({ ...g, name })),
         });
       },
+      // dragging:
+      draggedGroup: undefined,
+      setDraggedGroup: (id: EditorGroupId | undefined) =>
+        set({ draggedGroup: id }),
+      moveGroup: (id: EditorGroupId, draggedOverId: EditorGroupId) => {
+        // console.log('moveGroup', { id, draggedOverId });
+        const { groups } = get();
+        const oldIdx = groups.findIndex((g) => g.id == id);
+        const newIdx = groups.findIndex((g) => g.id == draggedOverId);
+        if (oldIdx !== -1 && newIdx !== -1 && oldIdx !== newIdx) {
+          const newOrder = arrayMove(groups, oldIdx, newIdx);
+          set({ groups: newOrder });
+        }
+      },
       //
     }),
     'useEditorGroupsStore'
@@ -75,6 +101,9 @@ export const useAllEditorGroups = (): EditorGroupId[] =>
 
 export const useEditorGroup = (id: EditorGroupId) =>
   useEditorGroupsStore((s) => s.groups.find((g) => g.id === id));
+
+export const useIsDraggingAnyGroup = () =>
+  useEditorGroupsStore((s) => s.draggedGroup !== undefined);
 
 const mapWithChange = (
   groups: EditorGroup[],

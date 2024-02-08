@@ -8,12 +8,16 @@ export const Card = ({
   shadowColor,
   className,
   borderTopOnMobile,
+  style,
+  wrapperRef,
   children,
 }: PropsWithChildren<{
   shadowDirection?: 'left' | 'right' | 'top';
   shadowColor?: string;
   className?: string;
   borderTopOnMobile?: boolean;
+  style?: React.CSSProperties;
+  wrapperRef?: React.LegacyRef<HTMLDivElement>;
 }>) => {
   const shadowSize = 8;
   const shadowX: Record<string, string | undefined> = {
@@ -22,15 +26,17 @@ export const Card = ({
     top: '0px',
   };
 
-  const style = {
+  const combinedStyle = {
     '--shadow-x': shadowX[shadowDirection || ''],
     '--shadow-y': `-${shadowSize}px`,
     '--shadow-col': shadowColor,
+    ...style,
   } as React.CSSProperties;
 
   return (
     <div
-      style={style}
+      ref={wrapperRef}
+      style={combinedStyle}
       className={cx(
         `relative bg-white w-full rounded-sm ${className}`,
         // shadow md and up

@@ -28,7 +28,7 @@ export const GroupNameInput = ({ group }: Props) => {
   );
 
   return (
-    <h2 className={cx(!enabled && 'text-gray-400')}>
+    <h2 className={cx('inline-block', !enabled && 'text-gray-400')}>
       <input
         className={cx(
           `bg-transparent outline-none focus:shadow-[0_4px_theme("colors.sky.500")]`

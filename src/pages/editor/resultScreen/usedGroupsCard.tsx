@@ -1,13 +1,38 @@
-import React, { useCallback } from 'react';
+import React, { CSSProperties, useCallback } from 'react';
 import cx from 'classnames';
+import { DndContext, DragEndEvent, closestCorners } from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import useEditorGroupsStore from 'pages/editor/editorStore';
-import { Card, CardContent, CardToolbar } from 'components';
+import { Card, CardContent, CardToolbar, DragHandle } from 'components';
 import { Toggle } from 'components/toggle';
 import { EditorGroup } from '../types';
+import {
+  getDraggedGroupId,
+  getDraggedOverGroupId,
+} from '../hooks/useGroupsDragAndDrop';
 
-// TODO format this, add status indicators
 export const UsedGroupsCard = () => {
   const groups = useEditorGroupsStore((s) => s.groups);
+  const groupIds = groups.map((g) => g.id);
+
+  const moveGroup = useEditorGroupsStore((s) => s.moveGroup);
+  const onDragEnd = useCallback(
+    (e: DragEndEvent) => {
+      const id = getDraggedGroupId(e);
+      const overId = getDraggedOverGroupId(e);
+      // console.log(`onDragEnd(id='${id}', overId='${overId}')`, e);
+
+      if (id !== undefined && overId !== undefined && id !== overId) {
+        moveGroup(id, overId);
+      }
+    },
+    [moveGroup]
+  );
 
   return (
     <Card shadowDirection="right" className="h-fit" borderTopOnMobile>
@@ -18,28 +43,59 @@ export const UsedGroupsCard = () => {
       </CardToolbar>
 
       <CardContent>
-        <ul role="list" className="grid ">
-          {groups.map((g) => (
-            <GroupRow key={g.id} group={g} />
-          ))}
-        </ul>
+        <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
+          <SortableContext
+            items={groupIds}
+            strategy={verticalListSortingStrategy}
+          >
+            <ul role="list" className="">
+              {groups.map((g) => (
+                <GroupRow key={g.id} group={g} />
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
       </CardContent>
     </Card>
   );
 };
 
-// TODO this is a bit awkward to use
+// TODO clicking on name should also toggle? TBH it should be inside <Label>
 const GroupRow = ({ group }: { group: EditorGroup }) => {
   const id = group.id;
-  const setGroupEnabled = useEditorGroupsStore((s) => s.setGroupEnabled);
 
+  const setGroupEnabled = useEditorGroupsStore((s) => s.setGroupEnabled);
   const toggleGroup = useCallback(
     (enabled: boolean) => setGroupEnabled(id, enabled),
     [id, setGroupEnabled]
   );
 
+  const {
+    attributes,
+    isDragging,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef, // used for drag handle
+    transform,
+    transition,
+  } = useSortable({ id });
+  const style: CSSProperties = {
+    opacity: isDragging ? 0.7 : undefined,
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   return (
-    <li className={cx('py-1 flex items-center gap-x-2 mb-2')}>
+    <li
+      className={cx('py-1 flex items-center gap-x-2 mb-2')}
+      ref={setNodeRef}
+      style={style}
+    >
+      <DragHandle
+        attributes={attributes}
+        listeners={listeners}
+        dragHandleRef={setActivatorNodeRef}
+      />
       <Toggle
         checked={group.enabled}
         id={`group-${id}-enabled`}

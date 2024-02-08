@@ -36,6 +36,9 @@ async function buildProd() {
   config.sourcemap = true;
   config.target = 'chrome100,firefox100,safari15'.split(',');
   await esbuild.build(config);
+  console.log(
+    `Build finished sucesfully. The files are in '${config.outdir}' directory.`
+  );
 }
 
 async function startDev() {

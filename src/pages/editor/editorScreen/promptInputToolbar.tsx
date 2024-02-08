@@ -3,6 +3,8 @@ import {
   SR_IGNORE_SVG,
   IconButton,
   CopyToClipboardBtn,
+  DragHandle,
+  DragHandleProps,
 } from 'components';
 import React, { useCallback, useRef } from 'react';
 import Icon from '@mdi/react';
@@ -16,13 +18,14 @@ import { Toggle } from 'components/toggle';
 import { GroupNameInput } from './groupNameInput';
 import { PromptTextRef } from 'components/promptInput';
 
-// TODO NOW drag and drop
 export const PromptInputToolbar = ({
   group,
   promptTextRef,
+  dragHandleProps,
 }: {
   group: EditorGroup;
   promptTextRef: PromptTextRef;
+  dragHandleProps: DragHandleProps;
 }) => {
   const { id: groupId, name } = group;
 
@@ -46,6 +49,10 @@ export const PromptInputToolbar = ({
     <CardToolbar childrenPos="apart">
       {/* left side */}
       <div className="grow">
+        <DragHandle
+          {...dragHandleProps}
+          className="-translate-x-1 translate-y-[6px]"
+        />
         <GroupNameInput group={group} />
       </div>
 
