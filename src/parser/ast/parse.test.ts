@@ -120,4 +120,45 @@ describe('parser-lark', () => {
     const expectedAst = square(square(square(square(square(text('eee'))))));
     expectAst(result, wrapInRoot(expectedAst));
   });
+
+  describe('on error', () => {
+    test('should throw on missing brace', () => {
+      const prompt = 'aaa,(bbb,ccc';
+
+      expect(() => {
+        const result = parse(prompt);
+        // debug(result);
+
+        const expectedAst = [text('aaa'), text('bbb'), text('ccc')];
+        expectAst(result, wrapInRoot(...expectedAst));
+      }).toThrowErrorMatchingInlineSnapshot(`
+"Parser error: the parser received an unexpected token. Expected one of: 
+	* RPAR
+	* COLON
+
+aa,(bbb,
+   ^"
+`);
+    });
+
+    test('should throw on invalid character sequence', () => {
+      const prompt = 'aaa,:(bbb,ccc';
+
+      expect(() => {
+        const result = parse(prompt);
+
+        const expectedAst = [text('aaa'), text('bbb'), text('ccc')];
+        expectAst(result, wrapInRoot(...expectedAst));
+      }).toThrowErrorMatchingInlineSnapshot(`
+"Parser error: the parser received an unexpected token. Expected one of: 
+	* $END
+	* WHITESPACE
+	* LSQB
+	* LPAR
+
+aaa,:(bb
+   ^"
+`);
+    });
+  });
 });

@@ -11,7 +11,14 @@ export interface ParsingMessage {
 
 export interface ParsingResult {
   ast: PromptAstGroup;
+  /**
+   * As seen by webui. Example entries:
+   * - 'aaa,bbb,,,c'
+   * - ','
+   */
   flatWeightedTokenList: WeightedToken[];
+  /** Tokens + weights in user-friendly form */
+  cleanedTokenWeights: WeightedToken[];
   tokenChunks: PromptChunk[];
   tokenCount: number;
   networks: PromptExternalNetwork[];
@@ -22,6 +29,7 @@ export interface ParsingResult {
 export const EMPTY_PARSING_RESULT: ParsingResult = {
   ast: newAstGroup(undefined, 'curly_bracket'),
   flatWeightedTokenList: [],
+  cleanedTokenWeights: [],
   tokenChunks: [],
   tokenCount: 0,
   networks: [],

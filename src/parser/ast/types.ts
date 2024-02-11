@@ -9,7 +9,7 @@ export interface PromptAstToken {
   type: 'token';
   /** text of the prompt token. */
   value: string;
-  resolvedWeight?: number; // TODO fill. Either walk AST or use webui's flattened list
+  resolvedWeight?: number;
 }
 
 export const newAstToken = (value: string): PromptAstToken => ({
@@ -73,6 +73,8 @@ export const getBracketsString = (
   astGroup: PromptAstGroup,
   bracketType: 'open' | 'close'
 ) => {
+  if (isRootNode(astGroup)) return '';
+
   let bracket = '';
   if (astGroup.groupType === 'square_bracket') {
     bracket = bracketType === 'close' ? ']' : '[';

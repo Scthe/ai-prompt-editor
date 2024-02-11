@@ -37,10 +37,10 @@ export function PromptAsList({ parsingResult }: Props) {
   const [sortOrder, setSortOrder] = useState<SortOrder>('prompt');
   const [displayMode, setDisplayMode] = useState<DisplayMode>('pill');
 
-  const { flatWeightedTokenList, networks } = parsingResult;
+  const { cleanedTokenWeights: cleanupTokenWeights, networks } = parsingResult;
 
   const nodes = useMemo(() => {
-    const tokens: RenderablePromptItem[] = flatWeightedTokenList.map(
+    const tokens: RenderablePromptItem[] = cleanupTokenWeights.map(
       weightedTokenAsRenderable
     );
     sortNodes(tokens, sortOrder);
@@ -50,7 +50,7 @@ export function PromptAsList({ parsingResult }: Props) {
     sortNodes(hypernets, sortOrder);
 
     return [...tokens, ...loras, ...hypernets];
-  }, [flatWeightedTokenList, networks, sortOrder]);
+  }, [cleanupTokenWeights, networks, sortOrder]);
 
   if (nodes.length === 0) {
     return <EmptyContent />;

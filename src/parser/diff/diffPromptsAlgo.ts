@@ -1,84 +1,105 @@
+import { PromptExternalNetwork, WeightedToken } from 'parser';
 import { ParsingResult } from '../types';
-import { PromptDiff } from './types';
+import { PromptDiff, PromptDiffEntry } from './types';
+import { partition, unique } from 'utils';
 
-////////////////////////////
-// Diff algo below:
-
+/**
+ * Returns:
+ *
+ * - `[0]` - tokens/networks that did not change
+ * - `[1]` - diffs for changed tokens/networks
+ *
+ * **Note:** diffing if you have duplicates is hmm.. this case is ignored.
+ */
 export const diffPrompts = (
-  // TODO implement diff
   promptA: ParsingResult,
   promptB: ParsingResult
-): PromptDiff => {
-  // TODO tokens, use flattened list
-  // TODO networks too
-  return [];
+): [PromptDiff, PromptDiff] => {
+  const tokensDiff = diffTokens(
+    promptA.cleanedTokenWeights,
+    promptB.cleanedTokenWeights
+  );
+
+  const [lorasA, hypernetsA] = partition(
+    promptA.networks,
+    (n) => n.type === 'lora'
+  );
+  const [lorasB, hypernetsB] = partition(
+    promptB.networks,
+    (n) => n.type === 'lora'
+  );
+
+  const lorasDiff = diffNetworks('lora', lorasA, lorasB);
+  const hypernetsDiff = diffNetworks('hypernetwork', hypernetsA, hypernetsB);
+
+  return [
+    [...tokensDiff[0], ...lorasDiff[0], ...hypernetsDiff[0]],
+    [...tokensDiff[1], ...lorasDiff[1], ...hypernetsDiff[1]],
+  ];
 };
 
-/** Note: diffing if you have duplicates is hmm.. This case is ignored. */
-/*
-const diffAstTrees = (
-  treeA: PromptAstGroup,
-  treeB: PromptAstGroup
-): [PromptAstToken[], PromptAstTokenDiff[]] => {
-  const allTokenNames: string[] = [];
+const diffTokens = (tokensA: WeightedToken[], tokensB: WeightedToken[]) => {
+  let allTokenNames: string[] = [];
 
-  const createNameToNodeMap = (tree: PromptAstGroup) => {
-    const tokens = flattenAstTree(tree);
-    const mmap = new Map<string, PromptAstToken>();
+  const createNameToWeightMap = (tokens: WeightedToken[]) => {
+    const mmap = new Map<string, number>();
     tokens.forEach((t) => {
-      const name = t.isLora
-        ? `${LORA_PREFIX}${t.value}${LORA_SUFFIX}`
-        : t.value;
-      mmap.set(name, t);
+      const [name, weight] = t;
+      mmap.set(name, weight);
       allTokenNames.push(name);
     });
     return mmap;
   };
 
-  const mmapA = createNameToNodeMap(treeA);
-  const mmapB = createNameToNodeMap(treeB);
-  const uniqueTokenNames = unique(...allTokenNames).sort();
+  const mmapA = createNameToWeightMap(tokensA);
+  const mmapB = createNameToWeightMap(tokensB);
+  allTokenNames = unique(...allTokenNames);
 
-  const changes: PromptAstTokenDiff[] = [];
-  const notChanged: PromptAstToken[] = [];
+  const changed: PromptDiffEntry[] = [];
+  const notChanged: PromptDiffEntry[] = [];
 
-  uniqueTokenNames.forEach((tokenName) => {
-    const nodeA = mmapA.get(tokenName);
-    const nodeB = mmapB.get(tokenName);
-    const diff = diffAstTreeNodes(nodeA, nodeB);
-    if (diff) {
-      changes.push(diff);
-    } else if (nodeA || nodeB) {
-      notChanged.push(nodeA || nodeB!);
+  allTokenNames.forEach((name) => {
+    const weightA = mmapA.get(name);
+    const weightB = mmapB.get(name);
+    const entry: PromptDiffEntry = {
+      name,
+      type: 'text',
+      weightA,
+      weightB,
+    };
+
+    if (isSameWeight(weightA, weightB)) {
+      notChanged.push(entry);
+    } else {
+      changed.push(entry);
     }
   });
 
-  return [notChanged, changes];
+  return [notChanged, changed];
 };
 
-const diffAstTreeNodes = (
-  nodeA: PromptAstToken | undefined,
-  nodeB: PromptAstToken | undefined
-): PromptAstTokenDiff | undefined => {
-  const valueA = nodeA?.resolvedWeight;
-  const valueB = nodeB?.resolvedWeight;
+const diffNetworks = (
+  type: PromptDiffEntry['type'],
+  netA: PromptExternalNetwork[],
+  netB: PromptExternalNetwork[]
+) => {
+  const tokensA: WeightedToken[] = netA.map((e) => [e.name, e.weight]);
+  const tokensB: WeightedToken[] = netB.map((e) => [e.name, e.weight]);
+  const [notChanged, changed] = diffTokens(tokensA, tokensB);
+  return [
+    notChanged.map((e) => ({ ...e, type })),
+    changed.map((e) => ({ ...e, type })),
+  ];
+};
 
+const isSameWeight = (
+  weightA: number | undefined,
+  weightB: number | undefined
+): boolean => {
   const closeEnough =
-    valueA !== undefined &&
-    valueB !== undefined &&
-    Math.abs(valueA - valueB) < 0.001; // usual float compare stuff
-  const sameWeights = valueA === valueB || closeEnough;
+    weightA !== undefined &&
+    weightB !== undefined &&
+    Math.abs(weightA - weightB) < 0.001; // usual float compare stuff
 
-  if (sameWeights) {
-    // would be weird if both were undefined. An error event.
-    // Otherwise, weights are same
-    return undefined;
-  }
-
-  return {
-    token: (nodeA || nodeB)!, // we know at least one is not `undefined`
-    valueA,
-    valueB,
-  };
+  return weightA === weightB || closeEnough;
 };
-*/

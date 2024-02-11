@@ -20,7 +20,7 @@ export function ParsingMessages({ messages }: { messages: ParsingMessage[] }) {
 const Msg = ({ msg }: { msg: ParsingMessage }) => {
   const isErr = msg.level === 'error';
   return (
-    <li className="py-1 alternateRow">
+    <li className="flex py-1 text-sm alternateRow">
       <span
         className={cx(
           'inline-block mr-1 underline uppercase px-2',
@@ -29,7 +29,7 @@ const Msg = ({ msg }: { msg: ParsingMessage }) => {
       >
         [{msg.level}]
       </span>
-      {msg.text}
+      <p className="inline-block font-mono whitespace-pre-wrap">{msg.text}</p>
     </li>
   );
 };

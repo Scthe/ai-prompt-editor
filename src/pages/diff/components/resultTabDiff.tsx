@@ -3,7 +3,7 @@ import { AstDiffTable } from 'components/promptDetails';
 import { ResultCardProps } from './resultCard';
 import { EmptyContent } from 'components/promptDetails/internal/emptyContent';
 import { ButtonGroup, ButtonInGroupDef } from 'components';
-import { PromptDiffEntry, stringifyDiffDelta } from 'parser';
+import { PromptDiffEntry, diffPrompts, stringifyDiffDelta } from 'parser';
 
 type DffFilter =
   | 'all'
@@ -27,13 +27,10 @@ export const ResultTabDiff = (props: ResultCardProps) => {
   const shownDiffs = tokenDiffs.filter((e) => isDiffEntryShown(filter, e));
   const data = filter === 'shared' ? notChanged : shownDiffs;
 
-  if (shownDiffs.length === 0) {
-    const msg =
-      tokenDiffs.length === 0
-        ? 'There are no differences'
-        : `No matches for current filter`;
-    return <EmptyContent text={msg} className="mb-6" />;
-  }
+  const emptyMsg =
+    tokenDiffs.length === 0
+      ? 'There are no differences'
+      : `No matches for current filter`;
 
   return (
     <>
@@ -45,7 +42,11 @@ export const ResultTabDiff = (props: ResultCardProps) => {
           buttons={FILTER_LABELS}
         />
       </div>
-      <AstDiffTable tokenDiffs={data} />
+      {shownDiffs.length === 0 ? (
+        <EmptyContent text={emptyMsg} className="mb-6" />
+      ) : (
+        <AstDiffTable tokenDiffs={data} />
+      )}
     </>
   );
 };
@@ -57,22 +58,13 @@ const useDiffAstTrees = (props: ResultCardProps) => {
   const [diffs, setDiffs] = useState<PromptDiffEntry[]>([]);
   const [notChanged, setNotChanged] = useState<PromptDiffEntry[]>([]);
 
-  /* // TODO [CRITICAL] restore
   useEffect(() => {
-    if (astBefore && astAfter) {
-      const [notChanged, changes] = diffAstTrees(astBefore, astAfter);
+    if (before !== undefined && after !== undefined) {
+      const [notChanged, changes] = diffPrompts(before, after);
       setDiffs(changes);
-
-      // ok, the following is a bit ugly
-      const notChangedAsDiffs: PromptAstTokenDiff[] = notChanged.map((n) => ({
-        token: n,
-        valueA: n.resolvedWeight,
-        valueB: n.resolvedWeight,
-      }));
-      setNotChanged(notChangedAsDiffs);
+      setNotChanged(notChanged);
     }
-  }, [astAfter, astBefore]);
-  */
+  }, [before, after]);
 
   return [notChanged, diffs];
 };

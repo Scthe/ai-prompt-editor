@@ -11,10 +11,15 @@ import { ParsingResult } from 'parser';
 interface Props {
   activeTab: DetailsTab;
   parsingResult: ParsingResult;
+  hideBreakOnTokensList?: boolean;
 }
 
 // TODO add optimize feature that removes duplicates? And flattens the prompt?
-export const PromptDetailsContent = ({ activeTab, parsingResult }: Props) => {
+export const PromptDetailsContent = ({
+  activeTab,
+  parsingResult,
+  hideBreakOnTokensList,
+}: Props) => {
   switch (activeTab) {
     case 'list':
       return <PromptAsList parsingResult={parsingResult} />;
@@ -23,6 +28,11 @@ export const PromptDetailsContent = ({ activeTab, parsingResult }: Props) => {
     case 'messages':
       return <ParsingMessages messages={parsingResult.messages} />;
     case 'tokens':
-      return <TokensList parsingResult={parsingResult} />;
+      return (
+        <TokensList
+          parsingResult={parsingResult}
+          hideBreak={hideBreakOnTokensList}
+        />
+      );
   }
 };

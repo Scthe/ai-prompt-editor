@@ -13,7 +13,6 @@ import { EmptyContent } from './internal/emptyContent';
 import { TokenTextContent } from './internal/tokenTextContent';
 import { assertUnreachable } from 'utils';
 
-// TODO [CRITICAL] add Loras and hypernets? Maybe?
 export function AstRenderer({
   astGroup,
   depth = 0,
@@ -26,7 +25,8 @@ export function AstRenderer({
   }
 
   const isEmpty = astGroup.bracketCount === 0;
-  const nextDepth = isEmpty ? depth : depth + astGroup.bracketCount;
+  const nextDepth =
+    isEmpty || isRootNode(astGroup) ? depth : depth + astGroup.bracketCount;
   const bracketOpenText = getBracketsString(astGroup, 'open');
   const bracketCloseText = getBracketsString(astGroup, 'close');
 

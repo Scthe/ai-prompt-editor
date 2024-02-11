@@ -9,6 +9,8 @@ const INITIAL_STATE: EditorGroup[] = [
   {
     ...newGroup(),
     name: 'Test group 0',
+    initialPrompt: 'aaaa BREAK bbb',
+    tab: 'tokens',
   },
   {
     ...newGroup(),

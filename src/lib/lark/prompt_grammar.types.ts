@@ -113,6 +113,60 @@ export interface LarkOptions {
   _plugins?: any;
 }
 
+interface LarkToken<T extends string> {
+  type: T;
+}
+
+interface LarkError {
+  _format_expected(expected: string[]): string;
+}
+
+/**
+ * The parser expected a token, but the input ended
+ *
+ * An exception that is raised by the parser, when the input ends while it still expects a token.
+ */
+export interface UnexpectedEOF extends LarkError {
+  expected: Set<string>;
+  token: LarkToken<'<EOF>'>;
+}
+export const isUnexpectedEOFError = (e: unknown): e is UnexpectedEOF =>
+  e !== null && typeof e === 'object' && hasToken(e) && !hasPosition(e);
+
+/**
+ * The lexer encountered an unexpected string
+ *
+ * An exception that is raised by the lexer, when it cannot match the next string of characters to any of its terminals.
+ */
+export interface UnexpectedCharacters extends LarkError {
+  pos_in_stream: number;
+  line: number;
+  column: number;
+  token: null;
+}
+export const isUnexpectedCharactersError = (
+  e: unknown
+): e is UnexpectedCharacters =>
+  e !== null && typeof e === 'object' && !hasToken(e) && hasPosition(e);
+
+/**
+ * The parser received an unexpected token
+ *
+ * An exception that is raised by the parser, when the token it received doesn't match any valid step forward.
+ */
+export interface UnexpectedToken extends LarkError {
+  pos_in_stream: number;
+  line: number;
+  column: number;
+  token: LarkToken<string>;
+  expected: Set<string>;
+}
+export const isUnexpectedTokenError = (e: unknown): e is UnexpectedToken =>
+  e !== null && typeof e === 'object' && (hasPosition(e) || hasToken(e));
+
+const hasPosition = (e: object) => typeof (e as any).pos_in_stream === 'number';
+const hasToken = (e: object) => (e as any).token != null;
+
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////

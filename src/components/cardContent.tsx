@@ -13,7 +13,7 @@ export const CardContent = ({
     <div
       className={cx(
         `py-2 px-4 ${className}`,
-        isAlwaysFullWidth && 'md:pb-6 md:px-6'
+        isAlwaysFullWidth && 'md:py-6 md:px-6'
       )}
     >
       {children}

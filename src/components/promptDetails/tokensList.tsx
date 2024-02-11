@@ -14,11 +14,11 @@ const COLORS = [
 
 interface Props {
   parsingResult: ParsingResult;
+  hideBreak?: boolean;
 }
 
-// TODO [CRTICITAL] decide if we ignore break here? Add a prop, only show break in editor results or diff.
 // TODO add 'what is this' help dialog. Add this to all tabs.
-export function TokensList({ parsingResult }: Props) {
+export function TokensList({ parsingResult, hideBreak }: Props) {
   const { tokenChunks } = parsingResult;
 
   if (hasNoChunks(tokenChunks)) {
@@ -28,17 +28,33 @@ export function TokensList({ parsingResult }: Props) {
   return (
     <div>
       {tokenChunks.map((chunk, idx) => (
-        <Chunk key={idx} idx={idx} chunk={chunk} />
+        <Chunk key={idx} idx={idx} chunk={chunk} hideBreak={hideBreak} />
       ))}
     </div>
   );
 }
 
-const Chunk = ({ idx, chunk }: { chunk: PromptChunk; idx: number }) => {
-  // TODO [CRITICAL] add styles for break
+const Chunk = ({
+  idx,
+  chunk,
+  hideBreak,
+}: {
+  chunk: PromptChunk;
+  idx: number;
+  hideBreak?: boolean;
+}) => {
   return (
     <>
-      {idx > 0 ? <p>BREAK</p> : undefined}
+      {!hideBreak && idx > 0 ? (
+        <p
+          className={cx(
+            'my-2 text-center relative',
+            'before:absolute before:top-[11px] before:left-0 before:w-full before:border-b before:border-gray-300'
+          )}
+        >
+          <span className="relative px-5 bg-white">BREAK</span>
+        </p>
+      ) : undefined}
       <ul role="list">
         {chunk.map((token, idx) => (
           <TokenStr key={idx} idx={idx} tokenObj={token} />
