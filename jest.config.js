@@ -8,4 +8,5 @@ module.exports = {
   roots: ['<rootDir>/src'],
   // allows imports like `import Tokenizer from 'parser/tokenizer';`
   moduleDirectories: ['node_modules', 'src'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', 'lark$'],
 };

@@ -1531,7 +1531,6 @@ __metadata:
     exifreader: "npm:^4.21.0"
     framer-motion: "npm:^11.0.3"
     jest: "npm:^29.7.0"
-    js-tiktoken: "npm:^1.0.10"
     localforage: "npm:^1.10.0"
     postcss: "npm:^8.4.33"
     prismjs: "npm:^1.29.0"
@@ -1859,13 +1858,6 @@ __metadata:
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
   checksum: 10c0/9308baf0a7e4838a82bbfd11e01b1cb0f0cf2893bc1676c27c2a8c0e70cbae1c59120c3268517a8ae7fb6376b4639ef81ca22582611dbee4ed28df945134aaee
-  languageName: node
-  linkType: hard
-
-"base64-js@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "base64-js@npm:1.5.1"
-  checksum: 10c0/f23823513b63173a001030fae4f2dabe283b99a9d324ade3ad3d148e218134676f1ee8568c877cd79ec1c53158dcf2d2ba527a97c606618928ba99dd930102bf
   languageName: node
   linkType: hard
 
@@ -4263,15 +4255,6 @@ __metadata:
   bin:
     jiti: bin/jiti.js
   checksum: 10c0/7f361219fe6c7a5e440d5f1dba4ab763a5538d2df8708cdc22561cf25ea3e44b837687931fca7cdd8cdd9f567300e90be989dd1321650045012d8f9ed6aab07f
-  languageName: node
-  linkType: hard
-
-"js-tiktoken@npm:^1.0.10":
-  version: 1.0.10
-  resolution: "js-tiktoken@npm:1.0.10"
-  dependencies:
-    base64-js: "npm:^1.5.1"
-  checksum: 10c0/a00d3ba40a4e5c268d4850a73640e93ce5be0e99511cdd126fc70858749966f7ec1ba5016118afd6c479e4f29a31e954ad2b9661f384ac85fb69487f592fd120
   languageName: node
   linkType: hard
 

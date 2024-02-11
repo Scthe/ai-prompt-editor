@@ -29,7 +29,6 @@
     "debounce": "^2.0.0",
     "exifreader": "^4.21.0",
     "framer-motion": "^11.0.3",
-    "js-tiktoken": "^1.0.10",
     "localforage": "^1.10.0",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",

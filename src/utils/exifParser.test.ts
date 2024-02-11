@@ -20,6 +20,18 @@ describe('exifParser', () => {
       Steps: '30',
     };
 
+    beforeAll(() => {
+      // silence!
+      global.console = {
+        ...console,
+        log: jest.fn(),
+        debug: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
+    });
+
     test('parses OK text', () => {
       const text = `${POSITIVE}\n${NEGATIVE_PROMPT_START} ${NEGATIVE}\n${SETTINGS}`;
       const result = parseAiParams(text);
