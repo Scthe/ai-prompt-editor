@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useEffectOnce } from './useEffectOnce';
-import { GroupParsingResult } from 'pages/editor/types';
 import { useLatest } from '../../_references/hooks/useLatest';
+import { ParsingResult } from 'parser';
 
 const PARSE_DEBOUNCE_MS = 2000;
 
@@ -10,20 +10,18 @@ export type ParsePromptFn = (newPrompt: string) => void;
 
 export interface ParsedPrompt {
   isParsing: boolean;
-  result: GroupParsingResult | undefined;
+  result: ParsingResult | undefined;
   parsePromptDebounced: ParsePromptFn;
   parsePromptImmediately: ParsePromptFn;
 }
 
 export const parseAndTokenize = async (
   text: string
-): Promise<GroupParsingResult> => {
-  let resolve: (
-    value: GroupParsingResult | PromiseLike<GroupParsingResult>
-  ) => void;
+): Promise<ParsingResult> => {
+  let resolve: (value: ParsingResult | PromiseLike<ParsingResult>) => void;
   let reject: (reason?: unknown) => void;
 
-  const promise = new Promise<GroupParsingResult>((resolve_, reject_) => {
+  const promise = new Promise<ParsingResult>((resolve_, reject_) => {
     resolve = resolve_;
     reject = reject_;
   });
@@ -47,7 +45,7 @@ export const parseAndTokenize = async (
 
 export const useParsedPrompt = (): ParsedPrompt => {
   const [isParsing, setIsParsing] = useState(true);
-  const [result, setParsingResult] = useState<GroupParsingResult | undefined>(
+  const [result, setParsingResult] = useState<ParsingResult | undefined>(
     undefined
   );
 

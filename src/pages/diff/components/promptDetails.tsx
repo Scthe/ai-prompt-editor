@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { DetailsTab, GroupParsingResult } from 'pages/editor/types';
 import { Title } from './text';
-import { PromptDetailsContent } from 'components/promptDetails/promptDetailsContent';
-import { PromptDetailsTabs } from 'components/promptDetails/promptDetailsTabs';
+import {
+  DetailsTab,
+  PromptDetailsContent,
+  PromptDetailsTabs,
+} from 'components/promptDetails';
+import { EMPTY_PARSING_RESULT, ParsingResult } from 'parser';
 
 interface Props {
-  prompt: GroupParsingResult | undefined;
+  parsingResult: ParsingResult | undefined;
 }
 
-export const PromptDetails = ({ prompt }: Props) => {
+export const PromptDetails = ({ parsingResult }: Props) => {
   const [tab, setTab] = useState<DetailsTab>('list');
 
   if (!prompt) return;
+
+  parsingResult = parsingResult || EMPTY_PARSING_RESULT;
 
   return (
     <div>
@@ -20,14 +25,13 @@ export const PromptDetails = ({ prompt }: Props) => {
       {/* Tabs inside tabs. Sometimes my genius is almost frightening. */}
       <PromptDetailsTabs
         id="diff-prompt-details"
-        tokenCount={prompt?.tokens.length}
-        messagesCount={prompt?.messages.length}
+        parsingResult={parsingResult}
         activeTab={tab}
         onTabSwitch={setTab}
         className="mb-8"
       />
 
-      <PromptDetailsContent activeTab={tab} data={prompt} />
+      <PromptDetailsContent activeTab={tab} parsingResult={parsingResult} />
     </div>
   );
 };

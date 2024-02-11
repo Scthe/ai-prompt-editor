@@ -25,7 +25,7 @@ export default function ResultScreen() {
     <>
       <div className="grid mb-10 md:grid-cols-2 gap-x-4 gap-y-6">
         <PromptCard
-          data={result}
+          parsingResult={result}
           isParsing={isParsing}
           initialPrompt={initialPrompt}
         />
@@ -33,7 +33,7 @@ export default function ResultScreen() {
         <UsedGroupsCard />
       </div>
 
-      <ResultDetails data={result} isParsing={isParsing} />
+      <ResultDetails parsingResult={result} isParsing={isParsing} />
     </>
   );
 }

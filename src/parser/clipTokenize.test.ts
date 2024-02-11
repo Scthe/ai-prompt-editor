@@ -12,9 +12,20 @@ describe('tokenize', () => {
     // console.log('expectChunksAddUpToOriginalEncoded', chunks);
     const t = new Tokenizer();
     const expEncoded = t.encode(expText);
-    const chunksEncoded = chunks.flatMap((c) => c.tokens);
+    const chunksEncoded = chunks.flatMap((c) => c.map((t) => t.token));
     expect(chunksEncoded).toStrictEqual(expEncoded);
   };
+
+  test('empty text', () => {
+    const text = '';
+    const weightedToken: WeightedToken = [text, 1.0];
+
+    const [chunks, tokenCount] = tokenize([weightedToken]);
+
+    expect(chunks).toHaveLength(1); // <75
+    expectChunksAddUpToOriginalEncoded(chunks, text);
+    expect(tokenCount).toBe(text.length);
+  });
 
   test('random numbers (one token per number)', () => {
     const text = '455218451484';
@@ -45,8 +56,8 @@ describe('tokenize', () => {
 
     const [chunks, tokenCount] = tokenize([weightedToken]);
     expect(chunks).toHaveLength(2); // 75 + 25
-    expect(chunks[0].tokens).toHaveLength(75);
-    expect(chunks[1].tokens).toHaveLength(25);
+    expect(chunks[0]).toHaveLength(75);
+    expect(chunks[1]).toHaveLength(25);
     expectChunksAddUpToOriginalEncoded(chunks, text);
     expect(tokenCount).toBe(text.length);
   });
@@ -59,10 +70,10 @@ describe('tokenize', () => {
     ]);
 
     expect(chunks).toHaveLength(2);
-    expect(chunks[0].tokens).toHaveLength(1);
-    expect(chunks[0].tokens[0]).toBe(9583);
-    expect(chunks[1].tokens).toHaveLength(1);
-    expect(chunks[1].tokens[0]).toBe(33535);
+    expect(chunks[0]).toHaveLength(1);
+    expect(chunks[0][0].token).toBe(9583);
+    expect(chunks[1]).toHaveLength(1);
+    expect(chunks[1][0].token).toBe(33535);
     // expectChunksAddUpToOriginalEncoded(chunks, text);
     expect(tokenCount).toBe(76); // 75 first chunk (with padding) and 1 for 2nd chunk
   });
@@ -75,9 +86,9 @@ describe('tokenize', () => {
     const [chunks, tokenCount] = tokenize([[text, 1.0]], 4);
 
     expect(chunks).toHaveLength(3);
-    expect(chunks[0].tokens).toHaveLength(4);
-    expect(chunks[1].tokens).toHaveLength(4);
-    expect(chunks[2].tokens).toHaveLength(3);
+    expect(chunks[0]).toHaveLength(4);
+    expect(chunks[1]).toHaveLength(4);
+    expect(chunks[2]).toHaveLength(3);
     expectChunksAddUpToOriginalEncoded(chunks, text);
     expect(tokenCount).toBe(4 + 4 + 3);
   });
@@ -90,9 +101,9 @@ describe('tokenize', () => {
     const [chunks, tokenCount] = tokenize([[text, 1.0]], 4);
 
     expect(chunks).toHaveLength(3);
-    expect(chunks[0].tokens).toHaveLength(2);
-    expect(chunks[1].tokens).toHaveLength(4);
-    expect(chunks[2].tokens).toHaveLength(3);
+    expect(chunks[0]).toHaveLength(2);
+    expect(chunks[1]).toHaveLength(4);
+    expect(chunks[2]).toHaveLength(3);
     expectChunksAddUpToOriginalEncoded(chunks, text);
     expect(tokenCount).toBe(4 + 4 + 3);
   });

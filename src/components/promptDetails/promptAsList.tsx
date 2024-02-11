@@ -1,16 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import {
-  PromptAstGroup,
-  PromptAstToken,
-  flattenAstTree,
-  hasNoChildren,
-} from '../../parser';
-import { astTokenContent, AstNodeRender } from './astNode';
-import { EmptyContent } from './emptyContent';
+  ParsingResult,
+  RenderablePromptItem,
+  RenderablePromptItemSortOrder,
+  sortRenderablePromptItem,
+  weightedTokenAsRenderable,
+} from 'parser';
+import { AlternatingRow } from './internal/alternatingRow';
+import { TokenTextContent } from './internal/tokenTextContent';
+import { EmptyContent } from './internal/emptyContent';
 import { ButtonGroup, ButtonInGroupDef } from 'components';
-import { cmpAlphabetical } from 'utils';
+import { partition } from 'utils';
 
-type SortOrder = 'prompt' | 'alphabetical' | 'attention';
+type SortOrder = RenderablePromptItemSortOrder;
+const sortNodes = sortRenderablePromptItem;
 
 const SORT_LABELS: ButtonInGroupDef<SortOrder>[] = [
   { id: 'prompt', label: 'Prompt' },
@@ -25,18 +28,31 @@ const DISPLAY_MODE_LABELS: ButtonInGroupDef<DisplayMode>[] = [
   { id: 'list', label: 'List' },
 ];
 
-// TODO add 'copy to clipboard flattened'
-export function AstListRenderer({ astGroup }: { astGroup: PromptAstGroup }) {
+interface Props {
+  parsingResult: ParsingResult;
+}
+
+// TODO [LOW] add 'copy to clipboard flattened'
+export function PromptAsList({ parsingResult }: Props) {
   const [sortOrder, setSortOrder] = useState<SortOrder>('prompt');
   const [displayMode, setDisplayMode] = useState<DisplayMode>('pill');
 
-  const nodes = useMemo(() => {
-    const nodes = flattenAstTree(astGroup);
-    sortNodes(nodes, sortOrder);
-    return nodes;
-  }, [astGroup, sortOrder]);
+  const { flatWeightedTokenList, networks } = parsingResult;
 
-  if (hasNoChildren(astGroup)) {
+  const nodes = useMemo(() => {
+    const tokens: RenderablePromptItem[] = flatWeightedTokenList.map(
+      weightedTokenAsRenderable
+    );
+    sortNodes(tokens, sortOrder);
+
+    const [loras, hypernets] = partition(networks, (e) => e.type === 'lora');
+    sortNodes(loras, sortOrder);
+    sortNodes(hypernets, sortOrder);
+
+    return [...tokens, ...loras, ...hypernets];
+  }, [flatWeightedTokenList, networks, sortOrder]);
+
+  if (nodes.length === 0) {
     return <EmptyContent />;
   }
 
@@ -63,7 +79,7 @@ export function AstListRenderer({ astGroup }: { astGroup: PromptAstGroup }) {
       {/* TODO <li> */}
       <div>
         {nodes.map((token, idx) => (
-          <Node key={idx} mode={displayMode} token={token} />
+          <Node key={idx} mode={displayMode} value={token} />
         ))}
       </div>
     </>
@@ -72,14 +88,15 @@ export function AstListRenderer({ astGroup }: { astGroup: PromptAstGroup }) {
 
 const Node = ({
   mode,
-  token,
+  value,
 }: {
   mode: DisplayMode;
-  token: PromptAstToken;
+  value: RenderablePromptItem;
 }) => {
-  const text = astTokenContent(token);
+  const text = <TokenTextContent {...value} />;
+
   if (mode === 'list') {
-    return <AstNodeRender>{text}</AstNodeRender>;
+    return <AlternatingRow>{text}</AlternatingRow>;
   }
   return (
     <div className="inline-block px-1 py-1 my-1 mr-1 font-mono text-sm bg-gray-200 rounded-md last:mr-0">
@@ -87,16 +104,3 @@ const Node = ({
     </div>
   );
 };
-
-function sortNodes(nodes: PromptAstToken[], order: SortOrder) {
-  switch (order) {
-    case 'attention': {
-      nodes.sort((a, b) => b.resolvedWeight - a.resolvedWeight);
-      break;
-    }
-    case 'alphabetical': {
-      nodes.sort((a, b) => cmpAlphabetical(a.value, b.value));
-      break;
-    }
-  }
-}

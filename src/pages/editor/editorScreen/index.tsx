@@ -68,7 +68,7 @@ const PromptCards = ({ groupId }: { groupId: EditorGroupId }) => {
   return (
     <>
       <PromptInputCard group={group} parsePrompt={updatePrompt} />
-      <DetailsCard group={group} isParsing={isParsing} data={result} />
+      <DetailsCard group={group} isParsing={isParsing} parsingResult={result} />
     </>
   );
 };

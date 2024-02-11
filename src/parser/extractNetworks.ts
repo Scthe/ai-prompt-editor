@@ -4,6 +4,18 @@ export type PromptExternalNetwork = {
   weight: number;
 };
 
+export const getNetworkText = (
+  token: PromptExternalNetwork,
+  showWeights = true
+) => {
+  const w = showWeights ? `:${token.weight}` : '';
+
+  if (token.type === 'hypernetwork') {
+    return `<hypernet:${token.name}${w}>`;
+  }
+  return `<lora:${token.name}${w}>`;
+};
+
 const NETWORK_REGEX = /<(lora|hypernet):.*?>/g;
 
 /** Extract LoRAs and hypernetworks */

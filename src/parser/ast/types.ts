@@ -1,3 +1,5 @@
+import { duplicateStr } from 'utils';
+
 export type PromptAstNode = PromptAstToken | PromptAstBreak | PromptAstGroup;
 
 //////////////
@@ -7,7 +9,7 @@ export interface PromptAstToken {
   type: 'token';
   /** text of the prompt token. */
   value: string;
-  resolvedWeight?: number;
+  resolvedWeight?: number; // TODO fill. Either walk AST or use webui's flattened list
 }
 
 export const newAstToken = (value: string): PromptAstToken => ({
@@ -66,3 +68,16 @@ export const isRootNode = (
 export const isNotRootNode = (
   astGroup: PromptAstGroup
 ): astGroup is PromptAstGroupChild => !isRootNode(astGroup);
+
+export const getBracketsString = (
+  astGroup: PromptAstGroup,
+  bracketType: 'open' | 'close'
+) => {
+  let bracket = '';
+  if (astGroup.groupType === 'square_bracket') {
+    bracket = bracketType === 'close' ? ']' : '[';
+  } else {
+    bracket = bracketType === 'close' ? ')' : '(';
+  }
+  return duplicateStr(bracket, astGroup.bracketCount);
+};

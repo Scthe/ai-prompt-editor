@@ -1,18 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
-import { PromptAstTokenDiff, getAstTokenDiffDelta } from '../../parser';
-import { getAsLoraElement } from './astNode';
 import { DiffColumnsSort } from 'pages/diff/types';
 import { SortOrder, oppositeSortOrder } from 'utils';
 import { mdiTriangle, mdiTriangleDown } from '@mdi/js';
 import Icon from '@mdi/react';
-import { SORTERS } from 'pages/diff/utils/diffs';
+import { SORTERS } from 'parser/diff/sort';
+import { PromptDiff, PromptDiffEntry, stringifyDiffDelta } from 'parser';
+import { TokenTextContent } from './internal/tokenTextContent';
 
-export function AstDiffTable({
-  tokenDiffs,
-}: {
-  tokenDiffs: PromptAstTokenDiff[];
-}) {
+export function AstDiffTable({ tokenDiffs }: { tokenDiffs: PromptDiff }) {
   const [sortCol, setSortCol] = useState<DiffColumnsSort>('token');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
@@ -75,7 +71,7 @@ export function AstDiffTable({
       <tbody>
         {data.map((tokenDiff) => (
           <DiffRow
-            key={`${tokenDiff.token.value}-${tokenDiff.token.isLora}`}
+            key={`${tokenDiff.type}-${tokenDiff.name}`}
             tokenDiff={tokenDiff}
           />
         ))}
@@ -119,24 +115,26 @@ const DiffHeader = (props: {
   );
 };
 
-const DiffRow = ({ tokenDiff }: { tokenDiff: PromptAstTokenDiff }) => {
-  const asLora = getAsLoraElement(tokenDiff.token);
-
+const DiffRow = ({ tokenDiff }: { tokenDiff: PromptDiffEntry }) => {
   return (
-    <tr
-      key={`${tokenDiff.token.value}-${tokenDiff.token.isLora}`}
-      className="alternateRow hover:bg-sky-100"
-    >
+    <tr className="alternateRow hover:bg-sky-100">
       <td className="py-1 font-mono text-center">
         <TokenDelta tokenDiff={tokenDiff} />
       </td>
       <td className="font-mono text-center">
-        <WeightValue value={tokenDiff.valueA} otherValue={tokenDiff.valueB} />
+        <WeightValue value={tokenDiff.weightA} otherValue={tokenDiff.weightB} />
       </td>
       <td className="font-mono text-center">
-        <WeightValue value={tokenDiff.valueB} otherValue={tokenDiff.valueA} />
+        <WeightValue value={tokenDiff.weightB} otherValue={tokenDiff.weightA} />
       </td>
-      <td className="px-4">{asLora ? asLora : tokenDiff.token.value}</td>
+      <td className="px-4">
+        <TokenTextContent
+          name={tokenDiff.name}
+          type={tokenDiff.type}
+          weight={tokenDiff.weightA || 1}
+          hideWeights
+        />
+      </td>
     </tr>
   );
 };
@@ -153,8 +151,8 @@ const WeightValue = ({
   return <span className={cx(isSmaller ? '' : 'text-sky-500')}>{txt}</span>;
 };
 
-function TokenDelta({ tokenDiff }: { tokenDiff: PromptAstTokenDiff }) {
-  const delta = getAstTokenDiffDelta(tokenDiff);
+function TokenDelta({ tokenDiff }: { tokenDiff: PromptDiffEntry }) {
+  const delta = stringifyDiffDelta(tokenDiff);
 
   if (delta === 'added') {
     return <span className="text-green-500">Added</span>;

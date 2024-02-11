@@ -1,13 +1,19 @@
 import React from 'react';
 import {
   PromptAstGroup,
+  PromptAstNode,
+  PromptAstToken,
+  astTokenAsRenderable,
   getBracketsString,
   hasNoChildren,
   isRootNode,
-} from '../../parser';
-import { astTokenContent, AstNodeRender } from './astNode';
-import { EmptyContent } from './emptyContent';
+} from 'parser';
+import { AlternatingRow } from './internal/alternatingRow';
+import { EmptyContent } from './internal/emptyContent';
+import { TokenTextContent } from './internal/tokenTextContent';
+import { assertUnreachable } from 'utils';
 
+// TODO [CRITICAL] add Loras and hypernets? Maybe?
 export function AstRenderer({
   astGroup,
   depth = 0,
@@ -26,42 +32,57 @@ export function AstRenderer({
 
   // optimize display for a single child. Cannot move the check cause TS will complain
   if (astGroup.children.length === 1 && astGroup.children[0].type === 'token') {
-    const childEl = astTokenContent(astGroup.children[0]);
     return (
-      <AstNodeRender depth={depth}>
+      <AlternatingRow depth={depth}>
         {bracketOpenText}
-        {childEl}
+        {renderToken(astGroup.children[0])}
         {bracketCloseText}
-      </AstNodeRender>
+      </AlternatingRow>
     );
   }
 
   return (
     <>
       {bracketOpenText.length ? (
-        <AstNodeRender depth={depth}>{bracketOpenText}</AstNodeRender>
+        <AlternatingRow depth={depth}>{bracketOpenText}</AlternatingRow>
       ) : undefined}
 
-      {astGroup.children.map((childAstNode, idx) => {
-        // TODO `key={idx}` is terrible
-        const key = idx;
-        if (childAstNode.type === 'token') {
-          const text = astTokenContent(childAstNode);
-          return (
-            <AstNodeRender key={key} depth={nextDepth}>
-              {text}
-            </AstNodeRender>
-          );
-        } else {
-          return (
-            <AstRenderer key={key} astGroup={childAstNode} depth={nextDepth} />
-          );
-        }
-      })}
+      {/* TODO `key={idx}` is terrible */}
+      {astGroup.children.map((childAstNode, idx) => (
+        <AstNodeEl key={idx} nextDepth={nextDepth} node={childAstNode} />
+      ))}
 
       {bracketCloseText.length ? (
-        <AstNodeRender depth={depth}>{bracketCloseText}</AstNodeRender>
+        <AlternatingRow depth={depth}>{bracketCloseText}</AlternatingRow>
       ) : undefined}
     </>
   );
 }
+
+const AstNodeEl = ({
+  node,
+  nextDepth,
+}: {
+  node: PromptAstNode;
+  nextDepth: number;
+}) => {
+  switch (node.type) {
+    case 'token': {
+      return (
+        <AlternatingRow depth={nextDepth}>{renderToken(node)}</AlternatingRow>
+      );
+    }
+    case 'group': {
+      return <AstRenderer astGroup={node} depth={nextDepth} />;
+    }
+    case 'break': {
+      return <AlternatingRow depth={nextDepth}>BREAK</AlternatingRow>;
+    }
+    default:
+      assertUnreachable(node);
+  }
+};
+
+const renderToken = (token: PromptAstToken) => {
+  return <TokenTextContent {...astTokenAsRenderable(token)} />;
+};

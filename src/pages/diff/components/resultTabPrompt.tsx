@@ -1,12 +1,13 @@
 import React from 'react';
-import { DiffTab, PerInputData } from './resultCard';
+import { DiffTab } from './resultCard';
 import { ImageSection } from './imageSection';
 import { PromptDetails } from './promptDetails';
 import cx from 'classnames';
+import { DiffInputData } from '../types';
 
 interface Props {
   activeTab: DiffTab;
-  data: PerInputData;
+  data: DiffInputData;
 }
 
 export const ResultTabPrompt = ({ activeTab, data }: Props) => {
@@ -19,7 +20,7 @@ export const ResultTabPrompt = ({ activeTab, data }: Props) => {
       {/* spacer if needed */}
       <div className={cx(image && result ? 'mb-16' : '')}></div>
 
-      <PromptDetails prompt={result} />
+      <PromptDetails parsingResult={result} />
     </div>
   );
 };

@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardToolbar } from 'components';
 import PromptLoader from 'components/loaders';
-import { PromptDetailsContent } from 'components/promptDetails/promptDetailsContent';
-import { PromptDetailsTabs } from 'components/promptDetails/promptDetailsTabs';
-import { GroupParsingResult, DetailsTab } from '../types';
+import {
+  PromptDetailsTabs,
+  PromptDetailsContent,
+  DetailsTab,
+} from 'components/promptDetails';
+import { EMPTY_PARSING_RESULT, ParsingResult } from 'parser';
 
 interface Props {
   isParsing: boolean;
-  data: GroupParsingResult | undefined;
+  parsingResult: ParsingResult | undefined;
 }
 
-export const ResultDetails = ({ data, isParsing }: Props) => {
+export const ResultDetails = ({ parsingResult, isParsing }: Props) => {
   const [tab, setTab] = useState<DetailsTab>('list');
-  const isLoading = isParsing || !data;
+  const isLoading = isParsing || !parsingResult;
+
+  parsingResult = parsingResult || EMPTY_PARSING_RESULT;
 
   return (
     <Card shadowDirection="top" className="h-fit" borderTopOnMobile>
@@ -21,15 +26,14 @@ export const ResultDetails = ({ data, isParsing }: Props) => {
       <CardToolbar>
         <PromptDetailsTabs
           id="result-details-tabs"
-          tokenCount={data?.tokens.length}
-          messagesCount={data?.messages.length}
+          parsingResult={parsingResult}
           activeTab={tab}
           onTabSwitch={setTab}
         />
       </CardToolbar>
 
       <CardContent isAlwaysFullWidth>
-        <PromptDetailsContent activeTab={tab} data={data} />
+        <PromptDetailsContent activeTab={tab} parsingResult={parsingResult} />
       </CardContent>
     </Card>
   );

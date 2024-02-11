@@ -1,13 +1,9 @@
 import { create } from 'zustand';
 
 import { logger, arrayMove } from 'utils';
-import {
-  DetailsTab,
-  EditorGroup,
-  EditorGroupId,
-  newGroup,
-} from 'pages/editor/types';
+import { EditorGroup, EditorGroupId, newGroup } from 'pages/editor/types';
 import debounce from 'debounce';
+import { DetailsTab } from 'components/promptDetails';
 
 const INITIAL_STATE: EditorGroup[] = [
   {

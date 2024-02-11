@@ -1,34 +1,28 @@
 import React from 'react';
 import {
-  DetailsTab,
-  EMPTY_GROUP_PARSING_RESULT,
-  GroupParsingResult,
-} from '../../pages/editor/types';
-import {
-  AstListRenderer,
+  PromptAsList,
   AstRenderer,
   ParsingMessages,
   TokensList,
+  DetailsTab,
 } from 'components/promptDetails';
+import { ParsingResult } from 'parser';
 
 interface Props {
   activeTab: DetailsTab;
-  data: GroupParsingResult | undefined;
+  parsingResult: ParsingResult;
 }
 
-// TODO <TokensList insertBreak /> to auto add BREAK?
 // TODO add optimize feature that removes duplicates? And flattens the prompt?
-export const PromptDetailsContent = ({ activeTab, data }: Props) => {
-  data = data || EMPTY_GROUP_PARSING_RESULT;
-
+export const PromptDetailsContent = ({ activeTab, parsingResult }: Props) => {
   switch (activeTab) {
     case 'list':
-      return <AstListRenderer astGroup={data.ast} />;
+      return <PromptAsList parsingResult={parsingResult} />;
     case 'ast':
-      return <AstRenderer astGroup={data.ast} />;
+      return <AstRenderer astGroup={parsingResult.ast} />;
     case 'messages':
-      return <ParsingMessages messages={data.messages} />;
+      return <ParsingMessages messages={parsingResult.messages} />;
     case 'tokens':
-      return <TokensList tokens={data.tokens} />;
+      return <TokensList parsingResult={parsingResult} />;
   }
 };

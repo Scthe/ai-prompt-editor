@@ -1,17 +1,9 @@
-import { GroupParsingResult } from 'pages/editor/types';
-import { parsePrompt } from 'parser';
-import { tokenizeGpt4 } from 'utils/gpt4Tokenizer';
+import { tokenizeAndParsePrompt } from 'parser';
 
 onmessage = async (msg) => {
   // console.log('Worker.start', { ...msg, data: msg.data });
   const text: string = msg.data;
-  const result = await parseAndTokenize(text);
+  const result = tokenizeAndParsePrompt(text);
   // console.log('Worker.willResolve', result);
   postMessage(result);
-};
-
-const parseAndTokenize = async (text: string): Promise<GroupParsingResult> => {
-  const [ast, messages] = parsePrompt(text);
-  const tokens = await tokenizeGpt4(ast);
-  return { ast, messages, tokens };
 };

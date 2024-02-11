@@ -74,3 +74,26 @@ export function arrayMove<T>(arr: T[], fromIndex: number, toIndex: number) {
   newArr.splice(toIndex, 0, newArr.splice(fromIndex, 1)[0]);
   return newArr;
 }
+
+export function assertUnreachable(_x: never): never {
+  throw new Error("Didn't expect to get here");
+}
+
+export function partition<T>(
+  arr: T[],
+  cmp: (e: T, idx: number) => boolean
+): [T[], T[]] {
+  const resultTrue: T[] = [];
+  const resultFalse: T[] = [];
+
+  arr.forEach((e, idx) => {
+    const res = cmp(e, idx);
+    if (res) {
+      resultTrue.push(e);
+    } else {
+      resultFalse.push(e);
+    }
+  });
+
+  return [resultTrue, resultFalse];
+}

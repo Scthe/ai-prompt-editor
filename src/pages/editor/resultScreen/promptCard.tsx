@@ -3,18 +3,22 @@ import { Card, CardContent, CardToolbar, CopyToClipboardBtn } from 'components';
 import styles from '../editorScreen/promptInputToolbar.module.css';
 import { PromptInput } from 'components/promptInput';
 import PromptLoader from 'components/loaders';
-import { GroupParsingResult } from '../types';
+import { ParsingResult } from 'parser';
 
 const NOOP = () => undefined;
 
 interface Props {
   isParsing: boolean;
-  data: GroupParsingResult | undefined;
+  parsingResult: ParsingResult | undefined;
   initialPrompt: string;
 }
 
-export default function PromptCard({ data, initialPrompt, isParsing }: Props) {
-  const isLoading = isParsing || !data;
+export default function PromptCard({
+  parsingResult,
+  initialPrompt,
+  isParsing,
+}: Props) {
+  const isLoading = isParsing || !parsingResult;
 
   return (
     <Card shadowDirection="left" className="h-fit" borderTopOnMobile>

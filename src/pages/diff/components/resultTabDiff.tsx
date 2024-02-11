@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { AstDiffTable } from 'components/promptDetails';
-import { PromptAstTokenDiff, diffAstTrees, getAstTokenDiffDelta } from 'parser';
 import { ResultCardProps } from './resultCard';
-import { EmptyContent } from 'components/promptDetails/emptyContent';
+import { EmptyContent } from 'components/promptDetails/internal/emptyContent';
 import { ButtonGroup, ButtonInGroupDef } from 'components';
+import { PromptDiffEntry, stringifyDiffDelta } from 'parser';
 
 type DffFilter =
   | 'all'
@@ -24,7 +24,7 @@ export const ResultTabDiff = (props: ResultCardProps) => {
   const [filter, setFilter] = useState<DffFilter>('all');
 
   const [notChanged, tokenDiffs] = useDiffAstTrees(props);
-  const shownDiffs = tokenDiffs.filter((e) => diffFilterFn(filter, e));
+  const shownDiffs = tokenDiffs.filter((e) => isDiffEntryShown(filter, e));
   const data = filter === 'shared' ? notChanged : shownDiffs;
 
   if (shownDiffs.length === 0) {
@@ -51,12 +51,13 @@ export const ResultTabDiff = (props: ResultCardProps) => {
 };
 
 const useDiffAstTrees = (props: ResultCardProps) => {
-  const astBefore = props.before.result?.ast;
-  const astAfter = props.after.result?.ast;
+  const before = props.before.result;
+  const after = props.after.result;
 
-  const [diffs, setDiffs] = useState<PromptAstTokenDiff[]>([]);
-  const [notChanged, setNotChanged] = useState<PromptAstTokenDiff[]>([]);
+  const [diffs, setDiffs] = useState<PromptDiffEntry[]>([]);
+  const [notChanged, setNotChanged] = useState<PromptDiffEntry[]>([]);
 
+  /* // TODO [CRITICAL] restore
   useEffect(() => {
     if (astBefore && astAfter) {
       const [notChanged, changes] = diffAstTrees(astBefore, astAfter);
@@ -71,12 +72,16 @@ const useDiffAstTrees = (props: ResultCardProps) => {
       setNotChanged(notChangedAsDiffs);
     }
   }, [astAfter, astBefore]);
+  */
 
   return [notChanged, diffs];
 };
 
-const diffFilterFn = (filter: DffFilter, item: PromptAstTokenDiff): boolean => {
-  const delta = getAstTokenDiffDelta(item);
+const isDiffEntryShown = (
+  filter: DffFilter,
+  item: PromptDiffEntry
+): boolean => {
+  const delta = stringifyDiffDelta(item);
 
   switch (filter) {
     case 'only added':
