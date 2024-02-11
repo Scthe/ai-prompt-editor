@@ -1,0 +1,15 @@
+// https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/prompt_parser.py#L15
+// Cheatsheet: https://lark-parser.readthedocs.io/en/latest/_static/lark_cheatsheet.pdf
+
+!start: (prompt | /[][():]/+)*
+// Original:
+// prompt: (emphasized | scheduled | alternate | plain | WHITESPACE)*
+prompt: (emphasized | scheduled | alternate | plain | WHITESPACE)
+!emphasized: "(" prompt ")"
+        | "(" prompt ":" prompt ")"
+        | "[" prompt "]"
+scheduled: "[" [prompt ":"] prompt ":" [WHITESPACE] NUMBER [WHITESPACE] "]"
+alternate: "[" prompt ("|" [prompt])+ "]"
+WHITESPACE: /\s+/
+plain: /([^\\\[\]():|]|\\.)+/
+%import common.SIGNED_NUMBER -> NUMBER
