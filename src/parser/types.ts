@@ -1,79 +1,101 @@
-// TODO does it require space before?
-export const BREAK_TOKEN = 'BREAK';
-
-export interface PromptAstToken {
-  type: 'token';
-  /** text of the prompt token. E.g. "text" in "text: 1.2". */
-  value: string;
-  /** final weight including braces */
-  resolvedWeight: number;
-  isLora: boolean;
-}
-
-export const newAstToken = (value: string): PromptAstToken => ({
-  type: 'token',
-  resolvedWeight: 1.0,
-  value,
-  isLora: false,
-});
-
-export const newAstLoraToken = (
-  value: string,
-  weight: number
-): PromptAstToken => ({
-  type: 'token',
-  resolvedWeight: weight, // TODO do braces affect LoRAs?
-  value,
-  isLora: true,
-});
-
-interface PromptAstGroupCommon {
-  type: 'group';
-  groupType: 'curly_bracket' | 'square_bracket';
-  bracketCount: number;
-  children: Array<PromptAstToken | PromptAstGroup>;
-  /** weight assigned using `(text: 1.2)` */
-  textWeight: number | undefined;
-}
-
-type PromptAstGroupChild = PromptAstGroupCommon & {
-  parent: PromptAstGroup;
-};
-type PromptAstGroupAstRoot = PromptAstGroupCommon & {
-  parent: undefined;
-};
-export type PromptAstGroup = PromptAstGroupChild | PromptAstGroupAstRoot;
-
-/** https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features#attentionemphasis */
-export const CURLY_BRACKET_ATTENTION = 1.1;
-/** https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features#attentionemphasis */
-export const SQUARE_BRACKET_ATTENTION = 1 / CURLY_BRACKET_ATTENTION;
-
-export const newAstGroup = (
-  parent: PromptAstGroup | undefined,
-  bracket: PromptAstGroup['groupType']
-): PromptAstGroup => ({
-  type: 'group',
-  groupType: bracket,
-  bracketCount: 1,
-  children: [],
-  parent,
-  textWeight: undefined,
-});
-
-export const isRootNode = (
-  astGroup: PromptAstGroup
-): astGroup is PromptAstGroupAstRoot => astGroup.parent === undefined;
-
-export const isNotRootNode = (
-  astGroup: PromptAstGroup
-): astGroup is PromptAstGroupChild => !isRootNode(astGroup);
+import { cmpAlphabetical } from 'utils';
+import { PromptAstGroup, PromptAstToken, newAstGroup } from './ast/types';
+import { PromptChunk } from './clipTokenize';
+import { PromptExternalNetwork } from './extractNetworks';
+import { WeightedToken } from './parsePromptAttention';
 
 export interface ParsingMessage {
   level: 'error' | 'warning';
   text: string;
 }
 
-export type ParsingResult = [PromptAstGroup, ParsingMessage[]];
+export interface ParsingResult {
+  ast: PromptAstGroup;
+  /**
+   * As seen by webui. Example entries:
+   * - 'aaa,bbb,,,c'
+   * - ','
+   */
+  flatWeightedTokenList: WeightedToken[];
+  /** Tokens + weights in user-friendly form */
+  cleanedTokenWeights: WeightedToken[];
+  tokenChunks: PromptChunk[];
+  tokenCount: number;
+  networks: PromptExternalNetwork[];
+  messages: ParsingMessage[];
+}
 
-export type PromptAstNode = PromptAstToken | PromptAstGroup;
+/** Needed on first render, before parsing is complete */
+export const EMPTY_PARSING_RESULT: ParsingResult = {
+  ast: newAstGroup(undefined, 'curly_bracket'),
+  flatWeightedTokenList: [],
+  cleanedTokenWeights: [],
+  tokenChunks: [],
+  tokenCount: 0,
+  networks: [],
+  messages: [],
+};
+
+//////////////////////////////
+/// RenderablePromptItem
+
+/** Generic wrapper for most things that can be rendered */
+export interface RenderablePromptItem {
+  type: PromptExternalNetwork['type'] | 'text';
+  name: string;
+  weight: number;
+}
+
+export const isRenderableNetwork = (
+  n: RenderablePromptItem
+): n is PromptExternalNetwork => n.type === 'lora' || n.type === 'hypernetwork';
+
+export const astTokenAsRenderable = (
+  t: PromptAstToken
+): RenderablePromptItem => ({
+  type: 'text',
+  name: t.value,
+  weight: t.resolvedWeight === undefined ? 1 : t.resolvedWeight,
+});
+
+export const weightedTokenAsRenderable = (
+  e: WeightedToken
+): RenderablePromptItem => ({
+  name: e[0],
+  weight: e[1],
+  type: 'text',
+});
+
+export const networkAsRenderable = (
+  e: PromptExternalNetwork
+): RenderablePromptItem => e;
+
+export type RenderablePromptItemSortOrder =
+  | 'prompt'
+  | 'alphabetical'
+  | 'attention';
+
+export function sortRenderablePromptItem(
+  nodes: RenderablePromptItem[],
+  order: RenderablePromptItemSortOrder
+) {
+  switch (order) {
+    case 'attention': {
+      nodes.sort((a, b) => b.weight - a.weight);
+      break;
+    }
+    case 'alphabetical': {
+      nodes.sort((a, b) => cmpAlphabetical(a.name, b.name));
+      break;
+    }
+  }
+}
+
+export const getAllRenderables = (
+  result: ParsingResult
+): RenderablePromptItem[] => {
+  const tokens: RenderablePromptItem[] = result.flatWeightedTokenList.map(
+    weightedTokenAsRenderable
+  );
+  return [...tokens, ...result.networks];
+};

@@ -15,9 +15,10 @@
     "preview": "yarn build && http-server build",
     "clean": "rimraf ./build/* || true",
     "lint": "eslint -c .eslintrc.json --ext .jsx,.js,.tsx,.ts src",
+    "lark:compile": "lark-js 'src/lib/lark/prompt_grammar.lark' -o 'src/lib/lark/prompt_grammar_lark.js'",
     "ts-dry": "yarn tsc",
     "test": "yarn jest",
-    "test:w": "yarn jest --watch"
+    "test:watch": "yarn jest --watch"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -29,7 +30,6 @@
     "debounce": "^2.0.0",
     "exifreader": "^4.21.0",
     "framer-motion": "^11.0.3",
-    "js-tiktoken": "^1.0.10",
     "localforage": "^1.10.0",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",

@@ -1,24 +1,25 @@
 import { create } from 'zustand';
 
 import { logger, arrayMove } from 'utils';
-import {
-  DetailsTab,
-  EditorGroup,
-  EditorGroupId,
-  newGroup,
-} from 'pages/editor/types';
+import { EditorGroup, EditorGroupId, newGroup } from 'pages/editor/types';
 import debounce from 'debounce';
+import { DetailsTab } from 'components/promptDetails';
 
 const INITIAL_STATE: EditorGroup[] = [
   {
     ...newGroup(),
     name: 'Test group 0',
+    initialPrompt: 'aaaa BREAK bbb',
+    tab: 'tokens',
   },
   {
     ...newGroup(),
     name: 'Test group 1',
-    tab: 'messages',
+    tab: 'ast',
     enabled: false,
+    initialPrompt:
+      // '(111[fromA:toA:0.25]222[toB:0.35]333[fromC::0.45]444[aaaD|bbD]555[aaaE|bbE|cE]666)',
+      '(111) ([fromA:toA:0.25]) 222, [toB:0.35], 333, [fromC::0.45], 444, [aaaD|bbD], 555, [aaaE|bbE|cE], 666',
   },
   {
     ...newGroup(),

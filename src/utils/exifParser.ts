@@ -1,5 +1,5 @@
 import * as ExifReader from 'exifreader';
-import Tokenizer from 'parser/tokenizer';
+import Tokenizer from 'utils/tokenizer';
 
 export interface AiImageExif {
   name: string;

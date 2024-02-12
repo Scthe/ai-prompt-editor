@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { ParsingMessage } from '../../parser';
-import { EmptyContent } from './emptyContent';
+import { ParsingMessage } from 'parser';
+import { EmptyContent } from './internal/emptyContent';
 
 export function ParsingMessages({ messages }: { messages: ParsingMessage[] }) {
   if (messages.length === 0) {
@@ -18,11 +18,9 @@ export function ParsingMessages({ messages }: { messages: ParsingMessage[] }) {
 }
 
 const Msg = ({ msg }: { msg: ParsingMessage }) => {
-  // 'p-8 text-zinc-900',
-  // hasError ? 'bg-red-500' : 'bg-amber-500'
   const isErr = msg.level === 'error';
   return (
-    <li className="py-1 alternateRow">
+    <li className="flex py-1 text-sm alternateRow">
       <span
         className={cx(
           'inline-block mr-1 underline uppercase px-2',
@@ -31,7 +29,7 @@ const Msg = ({ msg }: { msg: ParsingMessage }) => {
       >
         [{msg.level}]
       </span>
-      {msg.text}
+      <p className="inline-block font-mono whitespace-pre-wrap">{msg.text}</p>
     </li>
   );
 };

@@ -1,30 +1,40 @@
 import { TabDef, Tabs } from 'components';
-import { DetailsTab } from 'pages/editor/types';
+import { ParsingResult } from 'parser';
 import React from 'react';
+
+export type DetailsTab = 'list' | 'ast' | 'tokens' | 'messages';
+
+// TODO add 'variants' tab? For alternate/scheduled
 
 export const PromptDetailsTabs = ({
   id,
-  tokenCount,
-  messagesCount,
+  parsingResult,
+  className,
   activeTab,
   onTabSwitch,
-  className,
 }: {
   id: string;
-  tokenCount: number | undefined;
-  messagesCount: number | undefined;
+  parsingResult: ParsingResult;
+  className?: string;
   activeTab: DetailsTab;
   onTabSwitch: (nextTab: DetailsTab) => void;
-  className?: string;
 }) => {
+  const tokenCount = parsingResult.tokenCount;
   const tokensPill = tokenCount ? ` (${tokenCount})` : '';
+
+  const messagesCount = parsingResult.messages.length;
   const messagesPill = messagesCount ? ` (${messagesCount})` : '';
+  const hasError = parsingResult.messages.some((e) => e.level === 'error');
 
   const TABS: Array<TabDef<DetailsTab>> = [
     { id: 'list', label: 'list' },
     { id: 'ast', label: 'ast' },
     { id: 'tokens', label: `tokens${tokensPill}` },
-    { id: 'messages', label: `messages${messagesPill}` },
+    {
+      id: 'messages',
+      label: `messages${messagesPill}`,
+      className: hasError ? 'text-red-600' : '',
+    },
   ];
 
   return (

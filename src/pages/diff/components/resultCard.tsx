@@ -1,16 +1,13 @@
 import { Card, CardContent, CardToolbar, TabDef, Tabs } from 'components';
-import { ParsedPrompt } from 'hooks/useParsedPrompt';
 import React, { useState } from 'react';
-import { PromptImage } from './imageSelector';
 import PromptLoader from 'components/loaders';
 import { ResultTabDiff } from './resultTabDiff';
 import { ResultTabPrompt } from './resultTabPrompt';
-
-export type PerInputData = ParsedPrompt & { image: PromptImage | undefined };
+import { DiffInputData } from '../types';
 
 export interface ResultCardProps {
-  before: PerInputData;
-  after: PerInputData;
+  before: DiffInputData;
+  after: DiffInputData;
 }
 
 export type DiffTab = 'diff' | 'before' | 'after';

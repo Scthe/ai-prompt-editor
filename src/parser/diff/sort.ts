@@ -1,14 +1,14 @@
-import { PromptAstTokenDiff, getAstTokenDiffDelta, getLoraText } from 'parser';
 import { cmpAlphabetical } from 'utils';
-import { DiffColumnsSort } from '../types';
+import { DiffColumnsSort } from '../../pages/diff/types';
+import { PromptDiffEntry, getSortName, stringifyDiffDelta } from './types';
 
 export const SORTERS: Record<
   DiffColumnsSort,
-  (a: PromptAstTokenDiff, b: PromptAstTokenDiff) => number
+  (a: PromptDiffEntry, b: PromptDiffEntry) => number
 > = {
   change: (a, b) => {
-    const deltaA = getAstTokenDiffDelta(a);
-    const deltaB = getAstTokenDiffDelta(b);
+    const deltaA = stringifyDiffDelta(a);
+    const deltaB = stringifyDiffDelta(b);
 
     if (typeof deltaA === 'number' && typeof deltaB === 'number') {
       // both numbers
@@ -24,22 +24,19 @@ export const SORTERS: Record<
     return cmpDeltaStr === 0 ? SORTERS.token(a, b) : cmpDeltaStr;
   },
   before: (a, b) => {
-    const res = compareValues(a.valueA, b.valueA);
+    const res = compareValues(a.weightA, b.weightA);
     return res === 0 ? SORTERS.token(a, b) : res;
   },
   after: (a, b) => {
-    const res = compareValues(a.valueB, b.valueB);
+    const res = compareValues(a.weightB, b.weightB);
     return res === 0 ? SORTERS.token(a, b) : res;
   },
   token: (a, b) => {
-    const nameA = getName(a);
-    const nameB = getName(b);
+    const nameA = getSortName(a);
+    const nameB = getSortName(b);
     return cmpAlphabetical(nameA, nameB);
   },
 };
-
-const getName = (t: PromptAstTokenDiff) =>
-  getLoraText(t.token) || t.token.value;
 
 const compareValues = (a: number | undefined, b: number | undefined) => {
   if (a === b) return 0;

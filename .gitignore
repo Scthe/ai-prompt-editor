@@ -12,7 +12,9 @@
 yarn-debug.log*
 yarn-error.log*
 
+# build
+build
+
 # custom
 *.code-workspace
 _references
-build

@@ -4,7 +4,13 @@ yarn.lock
 .pnp.cjs
 .pnp.loader.mjs
 
-# my
+# libs
+src/lib/lark/prompt_grammar_lark.js
+src/lib/clip-bpe-js/bpe_simple_vocab_16e6.ts
+
+# build/static files
 public
 build
+
+# my
 _references

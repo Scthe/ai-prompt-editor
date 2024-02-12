@@ -14,6 +14,9 @@ export type TokenizerTokenFromGramma<T> = T extends Record<infer K, RegExp>
   : never;
 
 /**
+ * This is onld tokenizer used before switching to lark. Still used
+ * when parsing image exif data.
+ *
  * Based on:
  * - https://inspirnathan.com/posts/153-math-expression-tokenizer-in-javascript/
  * - https://blog.klipse.tech/tags/index.html#compiler

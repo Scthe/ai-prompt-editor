@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import { motion } from 'framer-motion';
 
-export type TabDef<T> = { id: T; label: string };
+export type TabDef<T> = { id: T; label: string; className?: string };
 
 type TabsProps<T> = {
   id: string;
@@ -33,6 +33,7 @@ export const Tabs = <T extends string>({
               onClick={() => onTabSwitch(tab.id)}
               className={cx(
                 'box-border relative block px-4 py-2 group',
+                tab.className,
                 isActive ? '' : 'cursor-pointer'
               )}
             >
@@ -43,7 +44,7 @@ export const Tabs = <T extends string>({
                 <div className="absolute bottom-[-4px] left-0 w-0 group-hover:w-full h-1 bg-sky-300"></div>
               ) : undefined}
 
-              {/* active */}
+              {/* active indicator */}
               {isActive ? (
                 <motion.div
                   layoutId={id}
