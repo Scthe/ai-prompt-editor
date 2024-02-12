@@ -1,6 +1,11 @@
 import { duplicateStr } from 'utils';
 
-export type PromptAstNode = PromptAstToken | PromptAstBreak | PromptAstGroup;
+export type PromptAstNode =
+  | PromptAstToken
+  | PromptAstScheduled
+  | PromptAstAlternate
+  | PromptAstBreak
+  | PromptAstGroup;
 
 //////////////
 /// Token
@@ -15,6 +20,54 @@ export interface PromptAstToken {
 export const newAstToken = (value: string): PromptAstToken => ({
   type: 'token',
   value,
+});
+
+//////////////
+/// Scheduled
+
+export type WithTextPosition = { startPos: number; endPos: number };
+
+export interface PromptAstScheduled extends WithTextPosition {
+  type: 'scheduled';
+  from: string;
+  to: string;
+  changeAt: number;
+  resolvedWeight?: number;
+}
+
+export const newAstScheduled = (
+  from: string,
+  to: string,
+  changeAt: number,
+  startPos: number,
+  endPos: number
+): PromptAstScheduled => ({
+  type: 'scheduled',
+  from,
+  to,
+  changeAt,
+  startPos,
+  endPos,
+});
+
+//////////////
+/// Token
+
+export interface PromptAstAlternate extends WithTextPosition {
+  type: 'alternate';
+  values: string[];
+  resolvedWeight?: number;
+}
+
+export const newAstAlternate = (
+  values: string[],
+  startPos: number,
+  endPos: number
+): PromptAstAlternate => ({
+  type: 'alternate',
+  values,
+  startPos,
+  endPos,
 });
 
 //////////////

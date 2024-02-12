@@ -63,9 +63,11 @@ const formatExpected = (
   parser: LarkParser,
   error: UnexpectedEOF | UnexpectedToken
 ) => {
-  const expected = [...error.expected].map((exp) => {
+  const expArr = [...error.expected].sort();
+  const expected = expArr.map((exp) => {
     const maybeName = parser?._terminals_dict?.[exp]?.pattern?.value;
-    return maybeName || exp;
+    const maybeNameAsStr = maybeName != null ? `: ${maybeName}` : '';
+    return `${exp}${maybeNameAsStr}`;
   });
   return error._format_expected(expected);
 };

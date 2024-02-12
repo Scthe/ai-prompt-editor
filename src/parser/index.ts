@@ -23,13 +23,9 @@ import {
   isBreakToken,
   parsePromptAttention,
 } from './parsePromptAttention';
+import { resolveAlternateAndScheduled } from './resolveAlternateAndScheduled';
 import { ParsingMessage, ParsingResult } from './types';
 
-/**
- * TODO scheduled
- * Detect scheduled in AST. Then take original '[a:b:0.25]'
- * and text-replace it with final value like 'a'?
- */
 export function tokenizeAndParsePrompt(prompt: string): ParsingResult {
   const messages: ParsingMessage[] = [];
 
@@ -38,8 +34,11 @@ export function tokenizeAndParsePrompt(prompt: string): ParsingResult {
   // create AST to get accurate text representation
   const ast = createAST(promptNoNetworks, messages);
 
+  // text-replace all alternatives and scheduled with final versions
+  const cleanedPrompt = resolveAlternateAndScheduled(promptNoNetworks, ast);
+
   // create 'WeightedToken' array -> Array<[text, weight]>
-  const flatWeightedTokenList = parsePromptAttention(promptNoNetworks);
+  const flatWeightedTokenList = parsePromptAttention(cleanedPrompt);
 
   // clip tokenize each WeightedToken
   const [tokenChunks, tokenCount] = tokenize(flatWeightedTokenList);
@@ -74,7 +73,7 @@ const createAST = (prompt: string, messages: ParsingMessage[]) => {
 
   const root = newAstGroup(undefined, 'curly_bracket');
   parts.forEach((part, idx) => {
-    if (idx !== 0) {
+    if (idx > 0) {
       root.children.push(newAstBreak());
     }
 

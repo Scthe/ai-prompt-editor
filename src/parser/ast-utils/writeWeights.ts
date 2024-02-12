@@ -1,41 +1,48 @@
-import {
-  ParsingMessage,
-  PromptAstGroup,
-  PromptAstToken,
-  WeightedToken,
-} from 'parser';
-import { traverse } from '.';
+import { ParsingMessage, PromptAstGroup, WeightedToken } from 'parser';
+import { AstTextNode, getAllTexts, isAstTextNode, traverse } from '.';
 
 export const writeWeights = (
   root: PromptAstGroup,
   weights: WeightedToken[],
   messages: ParsingMessage[]
 ) => {
-  const nodes: PromptAstToken[] = [];
+  const weightsMap = createTokenWeightsMap(weights);
 
+  const nodes: Array<AstTextNode> = [];
   traverse(root, (node) => {
-    if (node.type === 'token') {
+    if (isAstTextNode(node)) {
       nodes.push(node);
     }
   });
 
-  const weightsMap = createTokenWeightsMap(weights);
   nodes.forEach((node) => {
-    const w = weightsMap[node.value];
-    if (w !== undefined) {
-      node.resolvedWeight = w;
-    } else {
-      console.warn(`Missing weight for '${node.value}'`);
+    let names = getAllTexts(node);
+    const possiblyWasRemoved = names.some((t) => t.length === 0);
+    names = names.filter((t) => t.length > 0);
+
+    const weights = names.map((name) => weightsMap[name]);
+    const weight = weights.find((e) => e !== undefined);
+
+    /*console.log(names, {
+      names,
+      weights,
+      weight,
+      weightsMap,
+    });*/
+    if (weight !== undefined) {
+      node.resolvedWeight = weight;
+    } else if (!possiblyWasRemoved) {
+      console.warn(`Missing weight for`, node);
       messages.push({
         level: 'warning',
-        text: `AST has '${node.value}', but webui seems to have missed it`,
+        text: `AST has '${names.join('|')}', but webui seems to have missed it`,
       });
     }
   });
 };
 
 const createTokenWeightsMap = (weights: WeightedToken[]) => {
-  const result: Record<string, number> = {};
+  const result: Record<string, number | undefined> = {};
 
   weights.forEach(([text, weight]) => {
     result[text] = weight;

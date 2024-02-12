@@ -9,7 +9,7 @@ import { removeAstNode } from '.';
 export const foldGroups = (root: PromptAstGroup) => {
   for (let i = 0; i < root.children.length; i++) {
     const childNode = root.children[i];
-    if (childNode.type === 'token' || childNode.type === 'break') {
+    if (childNode.type !== 'group') {
       continue;
     }
 

@@ -176,6 +176,7 @@ type PromptRules =
   | 'prompt'
   | 'emphasized'
   | 'scheduled'
+  | 'scheduledremove'
   | 'alternate'
   | 'plain';
 
@@ -215,12 +216,40 @@ export type Emphasized5_ASTNode = ASTNode<
   [ASTValue, PromptASTNode, ASTValue, PromptASTNode, ASTValue]
 >;
 
+/** Matches: `[from:to:0.25]` */
+export type Scheduled_ASTNode = ASTNode<
+  'scheduled',
+  // we will have: [prompt, prompt, NUMBER]
+  [PromptASTNode, PromptASTNode, ASTValue]
+>;
+
+/** Matches: `[to:0.25]` */
+export type ScheduledAddAfter_ASTNode = ASTNode<
+  'scheduled',
+  // we will have: [prompt, NUMBER]
+  [PromptASTNode, ASTValue]
+>;
+
+/** Matches: `[from::0.25]` */
+export type ScheduledRemoveAfter_ASTNode = ASTNode<
+  'scheduledremove',
+  // we will have: [prompt, NUMBER]
+  [PromptASTNode, ASTValue]
+>;
+
+/** Matches: `[aaa|bbb|ccc]` */
+export type AlternateASTNode = ASTNode<'alternate', Array<PromptASTNode>>;
+
 export type PromptASTNode = ASTNode<
   'prompt',
   Array<
     | PlainASTNode //
     | Emphasized3_ASTNode
     | Emphasized5_ASTNode
+    | Scheduled_ASTNode
+    | ScheduledAddAfter_ASTNode
+    | ScheduledRemoveAfter_ASTNode
+    | AlternateASTNode
   >
 >;
 

@@ -1,7 +1,13 @@
 export * from './writeWeights';
 export * from './detectDuplicates';
 
-import { PromptAstGroup, PromptAstNode } from 'parser/ast/types';
+import {
+  PromptAstAlternate,
+  PromptAstGroup,
+  PromptAstNode,
+  PromptAstScheduled,
+  PromptAstToken,
+} from 'parser/ast/types';
 import { removeAt } from 'utils';
 
 export const removeAstNode = (parent: PromptAstGroup, node: PromptAstNode) => {
@@ -29,5 +35,26 @@ export const traverse = (
     } else {
       cb(childNode);
     }
+  }
+};
+
+export type AstTextNode =
+  | PromptAstToken
+  | PromptAstScheduled
+  | PromptAstAlternate;
+
+export const isAstTextNode = (node: PromptAstNode): node is AstTextNode =>
+  node.type === 'token' ||
+  node.type === 'scheduled' ||
+  node.type === 'alternate';
+
+export const getAllTexts = (token: AstTextNode): string[] => {
+  switch (token.type) {
+    case 'token':
+      return [token.value];
+    case 'alternate':
+      return token.values;
+    case 'scheduled':
+      return [token.from, token.to];
   }
 };

@@ -4,6 +4,8 @@ import React from 'react';
 
 export type DetailsTab = 'list' | 'ast' | 'tokens' | 'messages';
 
+// TODO add 'variants' tab? For alternate/scheduled
+
 export const PromptDetailsTabs = ({
   id,
   parsingResult,
@@ -22,12 +24,17 @@ export const PromptDetailsTabs = ({
 
   const messagesCount = parsingResult.messages.length;
   const messagesPill = messagesCount ? ` (${messagesCount})` : '';
+  const hasError = parsingResult.messages.some((e) => e.level === 'error');
 
   const TABS: Array<TabDef<DetailsTab>> = [
     { id: 'list', label: 'list' },
     { id: 'ast', label: 'ast' },
     { id: 'tokens', label: `tokens${tokensPill}` },
-    { id: 'messages', label: `messages${messagesPill}` },
+    {
+      id: 'messages',
+      label: `messages${messagesPill}`,
+      className: hasError ? 'text-red-600' : '',
+    },
   ];
 
   return (

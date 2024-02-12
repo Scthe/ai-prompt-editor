@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, test } from '@jest/globals';
 import { larkTokenize } from './tokenize';
 import { safeJsonStringify } from 'utils';
@@ -53,7 +54,7 @@ describe('larkTokenize', () => {
       expect(emphNode.children[0]).toMatchObject({
         value: prompt.at(0), // opening bracket
       });
-      expectPlainNode(emphNode.children[1]!, '123');
+      expectPlainNode(emphNode.children[1]! as any, '123');
       expect(emphNode.children[2]).toMatchObject({
         value: prompt.at(-1), // closing bracket
       });
@@ -76,7 +77,7 @@ describe('larkTokenize', () => {
       expect(emphNode.children[0]).toMatchObject({
         value: '(',
       });
-      expectPlainNode(emphNode.children[1]!, 'aaa');
+      expectPlainNode(emphNode.children[1]! as any, 'aaa');
       expect(emphNode.children[2]).toMatchObject({
         value: ':',
       });

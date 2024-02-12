@@ -1,7 +1,12 @@
 import { describe, expect, test } from '@jest/globals';
 import { parse } from './parse';
 import { safeJsonStringify } from 'utils';
-import { PromptAstGroup, newAstGroup, newAstToken } from './types';
+import {
+  PromptAstGroup,
+  newAstAlternate,
+  newAstGroup,
+  newAstToken,
+} from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debug = (result: unknown) => {
@@ -30,6 +35,13 @@ describe('parser-lark', () => {
 
   const text = newAstToken;
 
+  const scheduled = (from: string, to: string, changeAt: number) => ({
+    type: 'scheduled',
+    from,
+    to,
+    changeAt,
+  });
+
   const wrapInRoot = (...args: PromptAstGroup['children']) =>
     curly(undefined, ...args);
 
@@ -50,6 +62,18 @@ describe('parser-lark', () => {
         expect(chResult.value).toBe(chExpected.value);
       } else if (chResult.type === 'group' && chExpected.type === 'group') {
         expectAst(chResult, chExpected);
+      } else if (
+        chResult.type === 'scheduled' &&
+        chExpected.type === 'scheduled'
+      ) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(chResult).toMatchObject(chExpected as any);
+      } else if (
+        chResult.type === 'alternate' &&
+        chExpected.type === 'alternate'
+      ) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(chResult).toMatchObject(chExpected as any);
       } else {
         throw new Error(
           `Tried to compare AST node '${chResult.type}' with '${chExpected.type}'`
@@ -121,6 +145,43 @@ describe('parser-lark', () => {
     expectAst(result, wrapInRoot(expectedAst));
   });
 
+  describe('scheduled', () => {
+    test.each([
+      ['[from:to:0.25]', 'from', 'to', 0.25],
+      // adds to to the prompt after a fixed number of steps (when)
+      ['[to:0.35]', '', 'to', 0.35],
+      // removes from from the prompt after a fixed number of steps (when)
+      ['[from::0.45]', 'from', '', 0.45],
+    ])('should parse "%s"', (prompt, from, to, value) => {
+      const result = parse(prompt);
+      // debug(result);
+
+      const expectedAst = scheduled(from, to, value);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expectAst(result, wrapInRoot(expectedAst as any));
+    });
+  });
+
+  describe('alternate', () => {
+    test.each([
+      ['[aaa|bb]', 'aaa', 'bb'],
+      // ['[aaa]', 'aaa'], // NOPE, this is weight mod, not an alternate!
+      ['[aaa|bb|c]', 'aaa', 'bb', 'c'],
+    ])('should parse "%s"', (prompt, ...values) => {
+      const result = parse(prompt);
+      // debug(result);
+
+      const expectedAst = newAstAlternate(values, 0, 0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (expectedAst as any).startPos;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (expectedAst as any).endPos;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expectAst(result, wrapInRoot(expectedAst as any));
+    });
+  });
+
   describe('on error', () => {
     test('should throw on missing brace', () => {
       const prompt = 'aaa,(bbb,ccc';
@@ -133,11 +194,11 @@ describe('parser-lark', () => {
         expectAst(result, wrapInRoot(...expectedAst));
       }).toThrowErrorMatchingInlineSnapshot(`
 "Parser error: the parser received an unexpected token. Expected one of: 
-	* RPAR
-	* COLON
-
-aa,(bbb,
-   ^"
+	* COLON: :
+	* RPAR: )
+Error in:
+aaa,(bbb,ccc
+    ^"
 `);
     });
 
@@ -152,11 +213,11 @@ aa,(bbb,
       }).toThrowErrorMatchingInlineSnapshot(`
 "Parser error: the parser received an unexpected token. Expected one of: 
 	* $END
-	* WHITESPACE
-	* LSQB
-	* LPAR
-
-aaa,:(bb
+	* LPAR: (
+	* LSQB: [
+	* WHITESPACE: \\s+
+Error in:
+aaa,:(bbb,ccc
    ^"
 `);
     });

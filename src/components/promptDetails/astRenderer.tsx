@@ -72,6 +72,32 @@ const AstNodeEl = ({
         <AlternatingRow depth={nextDepth}>{renderToken(node)}</AlternatingRow>
       );
     }
+    case 'scheduled': {
+      const changeAt = node.changeAt.toFixed(2);
+      return (
+        <AlternatingRow depth={nextDepth}>
+          <TokenTextContent
+            type="text"
+            name={`'${node.from}' -> '${node.to}' after ${changeAt}`}
+            weight={node.resolvedWeight || 1}
+            hideWeights={node.resolvedWeight === undefined}
+          />
+        </AlternatingRow>
+      );
+    }
+    case 'alternate': {
+      const valuesStr = node.values.join('|');
+      return (
+        <AlternatingRow depth={nextDepth}>
+          <TokenTextContent
+            type="text"
+            name={`|${valuesStr}|`}
+            weight={node.resolvedWeight || 1}
+            hideWeights={node.resolvedWeight === undefined}
+          />
+        </AlternatingRow>
+      );
+    }
     case 'group': {
       return <AstRenderer astGroup={node} depth={nextDepth} />;
     }

@@ -15,8 +15,11 @@ const INITIAL_STATE: EditorGroup[] = [
   {
     ...newGroup(),
     name: 'Test group 1',
-    tab: 'messages',
+    tab: 'ast',
     enabled: false,
+    initialPrompt:
+      // '(111[fromA:toA:0.25]222[toB:0.35]333[fromC::0.45]444[aaaD|bbD]555[aaaE|bbE|cE]666)',
+      '(111) ([fromA:toA:0.25]) 222, [toB:0.35], 333, [fromC::0.45], 444, [aaaD|bbD], 555, [aaaE|bbE|cE], 666',
   },
   {
     ...newGroup(),

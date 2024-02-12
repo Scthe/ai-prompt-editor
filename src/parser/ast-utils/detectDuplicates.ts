@@ -1,17 +1,19 @@
 import { ParsingMessage, PromptAstGroup, PromptExternalNetwork } from 'parser';
-import { traverse } from '.';
+import { getAllTexts, isAstTextNode, traverse } from '.';
 import { partition, unique } from 'utils';
 
 export const detectDuplicates = (
   root: PromptAstGroup,
   messages: ParsingMessage[]
 ) => {
-  const valueTexts: string[] = [];
+  let valueTexts: string[] = [];
   traverse(root, (node) => {
-    if (node.type === 'token') {
-      valueTexts.push(node.value);
+    if (isAstTextNode(node)) {
+      valueTexts.push(...getAllTexts(node));
     }
   });
+
+  valueTexts = valueTexts.filter((e) => e.length > 0);
 
   const duplicates = findDuplicates(valueTexts);
   duplicates.forEach((text) => {

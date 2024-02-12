@@ -47,7 +47,6 @@ export const DetailsCard = ({ group, parsingResult, isParsing }: Props) => {
         <PromptDetailsContent
           activeTab={group.tab}
           parsingResult={parsingResult}
-          hideBreakOnTokensList
         />
       </CardContent>
     </Card>
