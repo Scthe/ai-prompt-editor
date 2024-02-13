@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { DndContext, closestCorners } from '@dnd-kit/core';
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { EditorGroupId } from '../types';
+import { EditorGroup, EditorGroupId } from '../types';
 import { useParsedPrompt, useSetInitialPrompt } from 'hooks/useParsedPrompt';
 import { DetailsCard } from './detailsCard';
 import { PromptInputCard } from './promptInputCard';
@@ -15,6 +15,8 @@ import {
 } from 'pages/editor/editorStore';
 import { AddNewGroupBtn } from './addNewGroupBtn';
 import { useGroupsDragAndDrop } from '../hooks/useGroupsDragAndDrop';
+import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
+import { ANIMATION_SPEED } from 'animation';
 
 // TODO drag&drop on mobile is a bit crap
 export default function EditorScreen() {
@@ -33,10 +35,12 @@ export default function EditorScreen() {
           items={groupIds}
           strategy={verticalListSortingStrategy}
         >
-          <div className="grid mb-6 md:grid-cols-2 gap-x-4 gap-y-10">
-            {groupIds.map((id) => (
-              <PromptCards key={id} groupId={id} />
-            ))}
+          <div className="grid mb-6 md:grid-cols-2 gap-x-4 gap-y-2 md:gap-y-10">
+            <AnimatePresence initial={false} mode="sync">
+              {groupIds.map((id) => (
+                <PromptCards key={id} groupId={id} />
+              ))}
+            </AnimatePresence>
           </div>
         </SortableContext>
       </DndContext>
@@ -48,6 +52,11 @@ export default function EditorScreen() {
 
 const PromptCards = ({ groupId }: { groupId: EditorGroupId }) => {
   const group = useEditorGroup(groupId);
+  const groupBeforeDeleteRef = useRef<EditorGroup | undefined>(group);
+  if (group !== undefined) {
+    groupBeforeDeleteRef.current = group;
+  }
+
   const parsedPrompt = useParsedPrompt();
   useSetInitialPrompt(parsedPrompt, group?.initialPrompt || '');
 
@@ -61,14 +70,34 @@ const PromptCards = ({ groupId }: { groupId: EditorGroupId }) => {
     [groupId, parsePromptDebounced]
   );
 
-  if (!group) {
+  const shownGroup = group || groupBeforeDeleteRef.current;
+  if (shownGroup == undefined) {
     return;
   }
 
   return (
     <>
-      <PromptInputCard group={group} parsePrompt={updatePrompt} />
-      <DetailsCard group={group} isParsing={isParsing} parsingResult={result} />
+      <motion.div {...animatePromptCard('left')}>
+        <PromptInputCard group={shownGroup} parsePrompt={updatePrompt} />
+      </motion.div>
+
+      <motion.div {...animatePromptCard('right')} className="mb-10 md:mb-0">
+        <DetailsCard
+          group={shownGroup}
+          isParsing={isParsing}
+          parsingResult={result}
+        />
+      </motion.div>
     </>
   );
+};
+
+const animatePromptCard = (dir: 'left' | 'right'): AnimationProps => {
+  const x = (dir === 'left' ? -1 : 1) * 100;
+  return {
+    initial: { x, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x, opacity: 0.0 },
+    transition: { duration: ANIMATION_SPEED.medium },
+  };
 };

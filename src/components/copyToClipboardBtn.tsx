@@ -5,6 +5,7 @@ import { mdiAlertCircle, mdiCheckBold, mdiContentCopy } from '@mdi/js';
 import { IconButton } from 'components/iconButton';
 import { copyToClipboard } from 'utils';
 import cx from 'classnames';
+import styles from './copyToClipboardBtn.module.css';
 
 const COPY_TIMEOUT = 2000;
 
@@ -55,7 +56,8 @@ export const CopyToClipboardBtn = ({
         path={mdiCheckBold}
         size={1.1}
         className={cx(
-          `absolute top-0 left-0 text-green-600 transition-opacity pointer-events-none`,
+          styles.animatedIcon,
+          `text-green-600`,
           state == 'success' ? 'opacity-100' : 'opacity-0'
         )}
         {...SR_IGNORE_SVG}
@@ -64,7 +66,8 @@ export const CopyToClipboardBtn = ({
         path={mdiAlertCircle}
         size={1.1}
         className={cx(
-          `absolute top-0 left-0 text-red-600 transition-opacity pointer-events-none`,
+          styles.animatedIcon,
+          `text-red-600`,
           state == 'error' ? 'opacity-100' : 'opacity-0'
         )}
         {...SR_IGNORE_SVG}

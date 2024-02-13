@@ -1,0 +1,8 @@
+.animatedIcon {
+  @apply absolute;
+  @apply top-0;
+  @apply left-0;
+  /* @apply transition-opacity; */
+  @apply pointer-events-none;
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}

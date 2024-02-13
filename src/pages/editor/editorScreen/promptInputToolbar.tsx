@@ -6,17 +6,17 @@ import {
   DragHandle,
   DragHandleProps,
 } from 'components';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import Icon from '@mdi/react';
 import { mdiClose } from '@mdi/js';
 import styles from './promptInputToolbar.module.css';
 import { EditorGroup } from '../types';
 import useEditorGroupsStore from 'pages/editor/editorStore';
-import { ModalController } from 'components';
-import { DeleteConfirmModal } from './deleteConfirmModal';
+import { DeleteConfirmModal, useDeleteGroupModal } from './deleteConfirmModal';
 import { Toggle } from 'components/toggle';
 import { GroupNameInput } from './groupNameInput';
 import { PromptTextRef } from 'components/promptInput';
+import { AnimatePresence } from 'framer-motion';
 
 export const PromptInputToolbar = ({
   group,
@@ -29,15 +29,7 @@ export const PromptInputToolbar = ({
 }) => {
   const { id: groupId, name } = group;
 
-  const modalCtrlRef = useRef<ModalController>();
-
-  const deleteGroup = useEditorGroupsStore((s) => s.removeGroup);
-  const showDeleteModal = useCallback(() => {
-    modalCtrlRef.current?.showModal();
-  }, []);
-  const onDeleteGroup = useCallback(() => {
-    deleteGroup(groupId);
-  }, [deleteGroup, groupId]);
+  const deleteGroupModal = useDeleteGroupModal(groupId);
 
   const setGroupEnabled = useEditorGroupsStore((s) => s.setGroupEnabled);
   const toggleGroup = useCallback(
@@ -48,10 +40,10 @@ export const PromptInputToolbar = ({
   return (
     <CardToolbar childrenPos="apart">
       {/* left side */}
-      <div className="grow">
+      <div className="flex grow">
         <DragHandle
           {...dragHandleProps}
-          className="-translate-x-1 translate-y-[6px]"
+          className="-translate-x-1 translate-y-[1px]"
         />
         <GroupNameInput group={group} />
       </div>
@@ -76,7 +68,7 @@ export const PromptInputToolbar = ({
         <IconButton
           id={`delete-btn-${groupId}`}
           srLabel="Delete prompt group"
-          onClick={showDeleteModal}
+          onClick={deleteGroupModal.showDeleteModal}
         >
           <Icon
             path={mdiClose}
@@ -87,11 +79,15 @@ export const PromptInputToolbar = ({
         </IconButton>
       </div>
 
-      <DeleteConfirmModal
-        controllerRef={modalCtrlRef}
-        groupName={name}
-        onConfirm={onDeleteGroup}
-      />
+      {/* AnimatePresence required if we have some other AnimatePresence parent */}
+      <AnimatePresence>
+        <DeleteConfirmModal
+          controllerRef={deleteGroupModal.modalCtrlRef}
+          groupName={name}
+          onCancel={deleteGroupModal.onCancel}
+          onConfirm={deleteGroupModal.onDeleteGroup}
+        />
+      </AnimatePresence>
     </CardToolbar>
   );
 };

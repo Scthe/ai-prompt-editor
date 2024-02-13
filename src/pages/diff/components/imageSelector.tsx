@@ -7,11 +7,12 @@ import { mdiClose } from '@mdi/js';
 import Icon from '@mdi/react';
 import { IconButton, SR_IGNORE_SVG } from 'components';
 import { SectionHeader } from './text';
+import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
+import { ANIMATION_SPEED } from 'animation';
 
 export type PromptImage = AiImageExif &
   Required<Pick<AiImageExif, 'rawAiParams' | 'aiParams'>>;
 
-// TODO load from url?
 export const ImageSelector = ({
   id,
   onImageSelected,
@@ -108,26 +109,51 @@ const DropZoneContent = ({
 }) => {
   const isIdle = !isDragAccept && !isDragReject;
 
+  const ANIM_PROPS: AnimationProps = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: ANIMATION_SPEED.medium },
+  };
+
   return (
     <div
       className={cx(
-        `flex items-center justify-center transition-colors`,
+        `transition-colors group`,
+        // when not dragging
+        isIdle && 'hover:bg-sky-100 cursor-pointer',
+        isIdle && !preview && 'bg-gray-100 text-gray-600',
         // drag response
-        isDragAccept && 'bg-sky-500 border-sky-400 text-white',
-        isDragReject && 'bg-red-500 border-red-400 text-white',
-        // graybox
-        !preview && 'h-[100px] border-4 border-dashed rounded-sm',
-        isIdle && 'hover:bg-sky-100 hover:border-sky-500 cursor-pointer',
-        isIdle && !preview && 'bg-gray-100 border-gray-400 text-gray-600 '
+        isDragAccept && 'bg-sky-500 text-white',
+        isDragReject && 'bg-red-500 text-white'
       )}
     >
-      {preview ? (
-        <ImagePreview preview={preview} />
-      ) : (
-        <p className="text-sm">
-          Select an AI generated image to extract Exif data
-        </p>
-      )}
+      <AnimatePresence mode="sync" initial={false}>
+        {preview ? (
+          <motion.div
+            key="preview"
+            className="flex items-center justify-center"
+            {...ANIM_PROPS}
+          >
+            <ImagePreview preview={preview} />
+          </motion.div>
+        ) : (
+          <motion.p
+            key="no-img-text"
+            className={cx(
+              'text-sm flex items-center justify-center transition-colors',
+              'h-[150px] border-4 border-dashed rounded-sm', // graybox
+              // border states:
+              'group-hover:border-sky-500',
+              isDragAccept && 'border-sky-100',
+              isDragReject && 'border-red-100',
+              isIdle && 'border-gray-400'
+            )}
+            {...ANIM_PROPS}
+          >
+            Select an AI generated image to extract Exif data
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

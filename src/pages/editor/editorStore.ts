@@ -8,26 +8,34 @@ import { DetailsTab } from 'components/promptDetails';
 const INITIAL_STATE: EditorGroup[] = [
   {
     ...newGroup(),
-    name: 'Test group 0',
-    initialPrompt: 'aaaa BREAK bbb',
-    tab: 'tokens',
+    name: 'My super style',
+    initialPrompt:
+      'masterpiece,best quality, (realistic,photorealistic:1.3),(highly detailed, colorful),[vibrant colors],(soft light),absurdres,',
   },
   {
     ...newGroup(),
-    name: 'Test group 1',
-    tab: 'ast',
+    name: 'Subject',
+    initialPrompt:
+      'landscape,(forest ((castle far away))),ocean,river,tree,cloud,sky,grass',
+  },
+  {
+    ...newGroup(),
+    name: 'Environment and misc',
+    initialPrompt:
+      'night,starry sky,nebula,landscape,horizon,nature,mountain, (Fujifilm XT3), (photorealistic:1.3),beautiful detailed sky',
+  },
+  {
+    ...newGroup(),
+    name: 'BREAK preview',
+    initialPrompt:
+      'flowers, roses,beach, fantasy,moon, smoke, fire, key visual BREAK after break',
+  },
+  {
+    ...newGroup(),
+    name: 'Test - alternate, scheduled',
     enabled: false,
     initialPrompt:
-      // '(111[fromA:toA:0.25]222[toB:0.35]333[fromC::0.45]444[aaaD|bbD]555[aaaE|bbE|cE]666)',
       '(111) ([fromA:toA:0.25]) 222, [toB:0.35], 333, [fromC::0.45], 444, [aaaD|bbD], 555, [aaaE|bbE|cE], 666',
-  },
-  {
-    ...newGroup(),
-    name: 'Test group 2',
-  },
-  {
-    ...newGroup(),
-    name: 'Test group 3',
   },
 ];
 

@@ -6,8 +6,6 @@ import PromptCard from './promptCard';
 import useEditorGroupsStore from '../editorStore';
 import { getCurrentPrompt } from '../types';
 
-// TODO show how BREAK is auto-placed?
-// TODO when result prompt is empty - it looks weird (paddings etc)
 export default function ResultScreen() {
   const initialPrompt = useMergedResultPromptText();
 
@@ -44,7 +42,6 @@ const useMergedResultPromptText = (): string => {
   );
   const groupIds = enabledGroups.map((g) => g.id);
 
-  // TODO maybe we should merge ASTs instead?
   return useMemo(() => {
     const texts = enabledGroups.map(getCurrentPrompt);
     return texts.join(',');

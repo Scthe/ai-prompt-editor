@@ -1,18 +1,26 @@
 import { Card } from 'components';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Button, ButtonMode } from 'components/button';
+import { motion, useAnimate } from 'framer-motion';
+import { FAST_CUBIC } from 'animation';
 
 export type ModalController =
   | { showModal: () => void; closeModal: () => void }
   | undefined;
 
+type CancelButton = ['cancel', onClick: () => void];
+
 export type DialogButton =
-  | 'cancel'
+  | CancelButton
   | {
       text: string;
       mode?: ButtonMode;
       onClick: () => void;
     };
+const isCancelButton = (btn: DialogButton): btn is CancelButton =>
+  Array.isArray(btn) && btn[0] === 'cancel';
+
+const MODAL_ANIMATION_Y = 20;
 
 type Props = React.PropsWithChildren<{
   controllerRef: React.MutableRefObject<ModalController>;
@@ -26,37 +34,47 @@ export const Dialog = ({
   openAtStartForDebug,
   children,
 }: Props) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [dialogRef, animate] = useAnimate<HTMLDialogElement>();
+
   useEffect(() => {
     controllerRef.current = {
-      showModal: () => dialogRef.current?.showModal(),
-      closeModal: () => dialogRef.current?.close(),
+      showModal: async () => {
+        await dialogRef.current?.showModal();
+        animate(dialogRef.current, { opacity: 1, y: 0 }, FAST_CUBIC);
+      },
+      closeModal: async () => {
+        await animate(
+          dialogRef.current,
+          { opacity: 0, y: MODAL_ANIMATION_Y },
+          FAST_CUBIC
+        );
+        dialogRef.current?.close();
+      },
     };
     if (openAtStartForDebug) {
       controllerRef.current.showModal(); // For designing
     }
-  }, [controllerRef, openAtStartForDebug]);
-
-  const handleCancel = useCallback(() => dialogRef.current?.close(), []);
+  }, [animate, controllerRef, dialogRef, openAtStartForDebug]);
 
   return (
-    <dialog ref={dialogRef} className="bg-transparent">
+    <motion.dialog
+      ref={dialogRef}
+      className="bg-transparent-10"
+      initial={{
+        opacity: 0,
+        y: MODAL_ANIMATION_Y,
+      }}
+    >
       <Card className="text-gray-800">
         {children}
 
-        <DialogButtonsRow onCancel={handleCancel} buttons={buttons} />
+        <DialogButtonsRow buttons={buttons} />
       </Card>
-    </dialog>
+    </motion.dialog>
   );
 };
 
-const DialogButtonsRow = ({
-  buttons,
-  onCancel,
-}: {
-  buttons?: DialogButton[];
-  onCancel: () => void;
-}) => {
+const DialogButtonsRow = ({ buttons }: { buttons?: DialogButton[] }) => {
   if (buttons === undefined || buttons.length === 0) {
     return;
   }
@@ -64,29 +82,37 @@ const DialogButtonsRow = ({
   return (
     <div className="flex justify-end gap-8 px-10 py-8">
       {buttons.map((btn, idx) => (
-        <DialogButton key={idx} btn={btn} onCancel={onCancel} />
+        <DialogButton key={idx} btn={btn} />
       ))}
     </div>
   );
 };
 
-const DialogButton = ({
-  btn,
-  onCancel,
-}: {
-  btn: DialogButton;
-  onCancel: () => void;
-}) => {
-  if (btn === 'cancel') {
+const DialogButton = ({ btn }: { btn: DialogButton }) => {
+  if (isCancelButton(btn)) {
     return (
-      <Button onClick={onCancel} mode="normal" size="medium">
+      <Button
+        mode="normal"
+        size="medium"
+        onClick={(e) => {
+          e.preventDefault();
+          btn[1]();
+        }}
+      >
         Cancel
       </Button>
     );
   }
 
   return (
-    <Button onClick={btn.onClick} mode={btn.mode} size="medium">
+    <Button
+      mode={btn.mode}
+      size="medium"
+      onClick={(e) => {
+        e.preventDefault();
+        btn.onClick();
+      }}
+    >
       {btn.text}
     </Button>
   );

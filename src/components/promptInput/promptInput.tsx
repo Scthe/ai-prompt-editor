@@ -75,6 +75,7 @@ export function PromptInput({
       )}
     >
       <Editor
+        placeholder="masterpiece,(best quality), ..."
         disabled={disabled}
         value={code}
         onValueChange={onValueChange}
