@@ -35,7 +35,7 @@ export default function EditorScreen() {
           items={groupIds}
           strategy={verticalListSortingStrategy}
         >
-          <div className="grid mb-6 md:grid-cols-2 gap-x-4 gap-y-2 md:gap-y-10">
+          <div className="grid md:grid-cols-2 gap-x-4 gap-y-2 md:gap-y-10">
             <AnimatePresence initial={false} mode="sync">
               {groupIds.map((id) => (
                 <PromptCards key={id} groupId={id} />
@@ -45,7 +45,9 @@ export default function EditorScreen() {
         </SortableContext>
       </DndContext>
 
-      <AddNewGroupBtn />
+      <div className="mt-10 mb-6 md:mt-6 md:mb-0">
+        <AddNewGroupBtn />
+      </div>
     </>
   );
 }
@@ -81,7 +83,10 @@ const PromptCards = ({ groupId }: { groupId: EditorGroupId }) => {
         <PromptInputCard group={shownGroup} parsePrompt={updatePrompt} />
       </motion.div>
 
-      <motion.div {...animatePromptCard('right')} className="mb-10 md:mb-0">
+      <motion.div
+        {...animatePromptCard('right')}
+        className="mb-10 last:mb-0 md:mb-0"
+      >
         <DetailsCard
           group={shownGroup}
           isParsing={isParsing}

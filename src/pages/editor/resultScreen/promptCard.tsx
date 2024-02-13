@@ -22,7 +22,7 @@ export default function PromptCard({
 
   return (
     <Card shadowDirection="left" className="h-fit" borderTopOnMobile>
-      {isLoading ? <PromptLoader /> : undefined}
+      <PromptLoader visible={isLoading} />
 
       <Toolbar promptTextRef={initialPrompt} />
 

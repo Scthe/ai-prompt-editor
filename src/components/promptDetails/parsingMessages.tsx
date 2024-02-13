@@ -9,7 +9,7 @@ export function ParsingMessages({ messages }: { messages: ParsingMessage[] }) {
   }
 
   return (
-    <ul role="list" className={cx()}>
+    <ul role="list">
       {messages.map((msg, idx) => (
         <Msg key={idx} msg={msg} />
       ))}

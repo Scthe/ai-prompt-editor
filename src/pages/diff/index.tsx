@@ -1,4 +1,4 @@
-import { TopRightMenu } from 'components';
+import { PageTitle, TopRightMenu } from 'components';
 import { useParsedPrompt, useSetInitialPrompt } from 'hooks/useParsedPrompt';
 import React, { useCallback, useState } from 'react';
 import { DiffInputCard } from './components/diffInputCard';
@@ -10,7 +10,6 @@ const INITIAL_BEFORE =
 const INITIAL_AFTER =
   'masterpiece, (best quality), (super prompt: 1.1), <lora:testLora:0.3> newOne';
 
-// TODO add some page <h1> title and explanation what this tool is
 // TODO both prompts have own color scheme? left-sky, right-pink
 // TODO swap?
 export default function DiffPage() {
@@ -19,9 +18,11 @@ export default function DiffPage() {
 
   return (
     <main className="relative max-w-screen-xl min-h-screen px-2 pt-20 pb-8 mx-auto md:px-4">
+      <PageTitle title="AI Prompt Diff" />
+
       <TopRightMenu targetPage="editor" />
 
-      <div className="grid mb-10 md:grid-cols-2 gap-x-4">
+      <div className="grid mb-10 md:grid-cols-2 gap-y-10 md:gap-y-0 md:gap-x-4">
         <DiffInputCard
           id="before"
           initialPrompt={promptA.lastResetPrompt}

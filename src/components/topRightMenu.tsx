@@ -31,7 +31,8 @@ const GithubBtn = () => {
   return (
     <a
       href="https://github.com/Scthe/ai-prompt-editor"
-      className="relative flex items-center px-4 py-2 font-medium focus:outline-none hover:bg-sky-200"
+      className="relative flex items-center px-4 py-2 font-medium focus:outline-none hover:bg-sky-200 ring-inset rounded-bl-md"
+      title="See the repo on GitHub"
     >
       <span className="sr-only">GitHub</span>
       <svg
@@ -54,7 +55,7 @@ const OtherAppBtn = ({ targetPage }: Props) => {
     <a
       href={href}
       className={cx(
-        'block px-8 py-2 relative transition-colors cursor-pointer hover:bg-sky-200'
+        'block px-8 py-2 relative transition-colors cursor-pointer hover:bg-sky-200 ring-inset'
       )}
     >
       <span>{label}</span>

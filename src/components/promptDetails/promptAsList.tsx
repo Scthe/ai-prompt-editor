@@ -76,12 +76,11 @@ export function PromptAsList({ parsingResult }: Props) {
         />
       </div>
 
-      {/* TODO <li> */}
-      <div>
+      <ul role="list">
         {nodes.map((token, idx) => (
           <Node key={idx} mode={displayMode} value={token} />
         ))}
-      </div>
+      </ul>
     </>
   );
 }
@@ -96,11 +95,11 @@ const Node = ({
   const text = <TokenTextContent {...value} />;
 
   if (mode === 'list') {
-    return <AlternatingRow>{text}</AlternatingRow>;
+    return <AlternatingRow tag="li">{text}</AlternatingRow>;
   }
   return (
-    <div className="inline-block px-1 py-1 my-1 mr-1 font-mono text-sm bg-gray-200 rounded-md last:mr-0">
+    <li className="inline-block px-1 py-1 my-1 mr-1 font-mono text-sm bg-gray-200 rounded-md last:mr-0">
       {text}
-    </div>
+    </li>
   );
 };

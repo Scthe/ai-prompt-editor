@@ -5,7 +5,11 @@ import { AiImageExif, parseExif } from 'utils/exifParser';
 import { PromptId } from '../types';
 import { mdiClose } from '@mdi/js';
 import Icon from '@mdi/react';
-import { IconButton, SR_IGNORE_SVG } from 'components';
+import {
+  CardContentAnimatedHeight,
+  IconButton,
+  SR_IGNORE_SVG,
+} from 'components';
 import { SectionHeader } from './text';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import { ANIMATION_SPEED } from 'animation';
@@ -128,31 +132,33 @@ const DropZoneContent = ({
       )}
     >
       <AnimatePresence mode="sync" initial={false}>
-        {preview ? (
-          <motion.div
-            key="preview"
-            className="flex items-center justify-center"
-            {...ANIM_PROPS}
-          >
-            <ImagePreview preview={preview} />
-          </motion.div>
-        ) : (
-          <motion.p
-            key="no-img-text"
-            className={cx(
-              'text-sm flex items-center justify-center transition-colors',
-              'h-[150px] border-4 border-dashed rounded-sm', // graybox
-              // border states:
-              'group-hover:border-sky-500',
-              isDragAccept && 'border-sky-100',
-              isDragReject && 'border-red-100',
-              isIdle && 'border-gray-400'
-            )}
-            {...ANIM_PROPS}
-          >
-            Select an AI generated image to extract Exif data
-          </motion.p>
-        )}
+        <CardContentAnimatedHeight triggerKey={preview || ''}>
+          {preview ? (
+            <motion.div
+              key="preview"
+              className="flex items-center justify-center"
+              {...ANIM_PROPS}
+            >
+              <ImagePreview preview={preview} />
+            </motion.div>
+          ) : (
+            <motion.p
+              key="no-img-text"
+              className={cx(
+                'text-sm flex items-center justify-center transition-colors',
+                'h-[150px] border-4 border-dashed rounded-sm', // graybox
+                // border states:
+                'group-hover:border-sky-500',
+                isDragAccept && 'border-sky-100',
+                isDragReject && 'border-red-100',
+                isIdle && 'border-gray-400'
+              )}
+              {...ANIM_PROPS}
+            >
+              Select an AI generated image to extract Exif data
+            </motion.p>
+          )}
+        </CardContentAnimatedHeight>
       </AnimatePresence>
     </div>
   );

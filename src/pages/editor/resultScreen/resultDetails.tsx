@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardToolbar } from 'components';
+import {
+  Card,
+  CardContent,
+  CardContentAnimatedHeight,
+  CardToolbar,
+} from 'components';
 import PromptLoader from 'components/loaders';
 import {
   PromptDetailsTabs,
@@ -21,7 +26,8 @@ export const ResultDetails = ({ parsingResult, isParsing }: Props) => {
 
   return (
     <Card shadowDirection="top" className="h-fit" borderTopOnMobile>
-      {isLoading ? <PromptLoader /> : undefined}
+      <PromptLoader visible={isLoading} />
+      <h2 className="sr-only">Details for the final prompt</h2>
 
       <CardToolbar>
         <PromptDetailsTabs
@@ -32,9 +38,11 @@ export const ResultDetails = ({ parsingResult, isParsing }: Props) => {
         />
       </CardToolbar>
 
-      <CardContent isAlwaysFullWidth>
-        <PromptDetailsContent activeTab={tab} parsingResult={parsingResult} />
-      </CardContent>
+      <CardContentAnimatedHeight triggerKey={tab}>
+        <CardContent isAlwaysFullWidth>
+          <PromptDetailsContent activeTab={tab} parsingResult={parsingResult} />
+        </CardContent>
+      </CardContentAnimatedHeight>
     </Card>
   );
 };

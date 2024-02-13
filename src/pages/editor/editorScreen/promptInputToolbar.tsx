@@ -43,6 +43,7 @@ export const PromptInputToolbar = ({
       <div className="flex grow">
         <DragHandle
           {...dragHandleProps}
+          tooltip="Drag this group to switch the order"
           className="-translate-x-1 translate-y-[1px]"
         />
         <GroupNameInput group={group} />

@@ -11,26 +11,42 @@ export const ScreenModeSwitcher = ({
 }) => {
   const modes = ['editor', 'result'] as const;
   return (
-    <div className="fixed z-50 text-base -translate-x-1/2 left-1/2 top-4">
-      <div className="relative grid grid-cols-2 overflow-hidden text-gray-900 capitalize rounded-full shadow-xl w-fit bg-zinc-100">
+    <div
+      className={cx(
+        'fixed z-50 text-base -translate-x-1/2 left-1/2',
+        'bottom-2 md:bottom-auto md:top-4' // placement
+      )}
+    >
+      <div className="relative grid grid-cols-2 overflow-hidden text-gray-900 capitalize rounded-md shadow-xl w-fit bg-zinc-100">
+        {/* moving background */}
         <div
           className={cx(
             'absolute top-0 left-0 h-full w-1/2 bg-sky-500 pointer-events-none transition-[left]',
             activeMode === 'editor' ? 'left-0' : 'left-1/2'
           )}
         ></div>
+
+        {/* tabs */}
         {modes.map((mode) => (
           <a
+            autoFocus={mode === 'editor'}
+            tabIndex={0}
             key={mode}
             onClick={(e) => {
               e.preventDefault();
               onModeSwitch(mode);
             }}
             className={cx(
-              'block px-8 py-2 relative z-10 transition-colors basis-0',
+              'block relative z-10 transition-colors basis-0',
+              'px-4 sm:px-8 py-2',
+              // fix focus cause overflow-hidden on parent
+              'first-of-type:rounded-tl-md first-of-type:rounded-bl-md',
+              'last:rounded-tr-md last:rounded-br-md',
+              'ring-inset',
+              // usual active stuff
               mode === activeMode
                 ? 'text-white pointer-events-none'
-                : 'cursor-pointer hover:bg-sky-100 '
+                : 'cursor-pointer hover:bg-sky-200 '
             )}
           >
             {mode}

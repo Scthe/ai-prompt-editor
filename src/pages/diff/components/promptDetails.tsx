@@ -6,12 +6,14 @@ import {
   PromptDetailsTabs,
 } from 'components/promptDetails';
 import { EMPTY_PARSING_RESULT, ParsingResult } from 'parser';
+import { DiffTab } from './resultCard';
 
 interface Props {
+  diffTab: DiffTab;
   parsingResult: ParsingResult | undefined;
 }
 
-export const PromptDetails = ({ parsingResult }: Props) => {
+export const PromptDetails = ({ diffTab, parsingResult }: Props) => {
   const [tab, setTab] = useState<DetailsTab>('list');
 
   if (!prompt) return;
@@ -24,7 +26,7 @@ export const PromptDetails = ({ parsingResult }: Props) => {
 
       {/* Tabs inside tabs. Sometimes my genius is almost frightening. */}
       <PromptDetailsTabs
-        id="diff-prompt-details"
+        id={`diff-prompt-details-${diffTab}`}
         parsingResult={parsingResult}
         activeTab={tab}
         onTabSwitch={setTab}

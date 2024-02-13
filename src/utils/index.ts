@@ -97,3 +97,6 @@ export function partition<T>(
 
   return [resultTrue, resultFalse];
 }
+
+/** Seconds to miliseconts */
+export const s2ms = (s: number) => s * 1000;

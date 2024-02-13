@@ -84,7 +84,10 @@ const ImagePrompt = ({
 }) => {
   return (
     <>
-      <SectionHeader actions={<CopyToClipboardBtn id={id} textRef={prompt} />}>
+      <SectionHeader
+        id={id}
+        actions={<CopyToClipboardBtn id={id} textRef={prompt} />}
+      >
         {sectionName}
       </SectionHeader>
       <PromptInput
@@ -93,6 +96,7 @@ const ImagePrompt = ({
         className="mb-8"
         withBorder
         disabled
+        labelledById={id}
       />
     </>
   );

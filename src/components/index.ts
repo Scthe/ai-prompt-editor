@@ -1,6 +1,7 @@
 export * from './buttonGroup';
 export * from './card';
 export * from './cardContent';
+export * from './cardContentAnimatedHeight';
 export * from './cardToolbar';
 export * from './centeredMain';
 export * from './copyToClipboardBtn';
@@ -10,5 +11,6 @@ export * from './dragHandle';
 export * from './iconButton';
 export * from './icons';
 export * from './loaders';
+export * from './pageTitle';
 export * from './tabs';
 export * from './topRightMenu';

@@ -1,4 +1,11 @@
-import { Card, CardContent, CardToolbar, TabDef, Tabs } from 'components';
+import {
+  Card,
+  CardContent,
+  CardContentAnimatedHeight,
+  CardToolbar,
+  TabDef,
+  Tabs,
+} from 'components';
 import React, { useState } from 'react';
 import PromptLoader from 'components/loaders';
 import { ResultTabDiff } from './resultTabDiff';
@@ -26,7 +33,8 @@ export const ResultCard = (props: ResultCardProps) => {
 
   return (
     <Card shadowDirection="top" className="h-fit" borderTopOnMobile>
-      {isLoading ? <PromptLoader /> : undefined}
+      <PromptLoader visible={isLoading} />
+      <h2 className="sr-only">Diff between prompt before and after</h2>
 
       <CardToolbar>
         <Tabs
@@ -38,9 +46,11 @@ export const ResultCard = (props: ResultCardProps) => {
         />
       </CardToolbar>
 
-      <CardContent isAlwaysFullWidth>
-        <ResultContent {...props} activeTab={activeTab} />
-      </CardContent>
+      <CardContentAnimatedHeight triggerKey={activeTab}>
+        <CardContent isAlwaysFullWidth>
+          <ResultContent {...props} activeTab={activeTab} />
+        </CardContent>
+      </CardContentAnimatedHeight>
     </Card>
   );
 };
@@ -50,10 +60,8 @@ const ResultContent = (props: ResultCardProps & { activeTab: DiffTab }) => {
     case 'diff':
       return <ResultTabDiff {...props} />;
     case 'before':
-      return (
-        <ResultTabPrompt activeTab={props.activeTab} data={props.before} />
-      );
+      return <ResultTabPrompt diffTab={props.activeTab} data={props.before} />;
     case 'after':
-      return <ResultTabPrompt activeTab={props.activeTab} data={props.after} />;
+      return <ResultTabPrompt diffTab={props.activeTab} data={props.after} />;
   }
 };

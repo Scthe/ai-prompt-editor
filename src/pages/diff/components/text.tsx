@@ -26,12 +26,14 @@ export const SectionHeader = ({
   children,
   actions,
   className,
+  id,
 }: PropsWithChildren<{
   className?: string;
   actions?: React.ReactNode;
+  id?: string;
 }>) => (
   <div className={cx('mb-2 flex justify-between text-gray-900', className)}>
-    <h3>{children}</h3>
+    <h3 id={id}>{children}</h3>
     {actions ? <div>{actions}</div> : undefined}
   </div>
 );

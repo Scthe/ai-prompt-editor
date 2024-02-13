@@ -37,6 +37,7 @@
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.21.3",
     "react-simple-code-editor": "^0.13.1",
+    "react-use-measure": "^2.1.1",
     "use-debounce": "^10.0.0",
     "zustand": "^4.5.0"
   },

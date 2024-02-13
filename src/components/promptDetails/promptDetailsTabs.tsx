@@ -27,12 +27,12 @@ export const PromptDetailsTabs = ({
   const hasError = parsingResult.messages.some((e) => e.level === 'error');
 
   const TABS: Array<TabDef<DetailsTab>> = [
-    { id: 'list', label: 'list' },
-    { id: 'ast', label: 'ast' },
-    { id: 'tokens', label: `tokens${tokensPill}` },
+    { id: 'list', label: 'List' },
+    { id: 'ast', label: 'AST' },
+    { id: 'tokens', label: `Tokens${tokensPill}` },
     {
       id: 'messages',
-      label: `messages${messagesPill}`,
+      label: `Messages${messagesPill}`,
       className: hasError ? 'text-red-600' : '',
     },
   ];

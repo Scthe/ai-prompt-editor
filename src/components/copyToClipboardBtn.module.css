@@ -1,6 +1,7 @@
 .animatedIcon {
   @apply absolute;
-  @apply top-0;
+  @apply top-1/2;
+  @apply -translate-y-1/2;
   @apply left-0;
   /* @apply transition-opacity; */
   @apply pointer-events-none;

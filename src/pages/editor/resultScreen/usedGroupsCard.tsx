@@ -60,7 +60,6 @@ export const UsedGroupsCard = () => {
   );
 };
 
-// TODO clicking on name should also toggle? TBH it should be inside <Label>
 const GroupRow = ({ group }: { group: EditorGroup }) => {
   const id = group.id;
 
@@ -95,15 +94,19 @@ const GroupRow = ({ group }: { group: EditorGroup }) => {
         attributes={attributes}
         listeners={listeners}
         dragHandleRef={setActivatorNodeRef}
+        tooltip="Drag this group to switch the order"
       />
       <Toggle
         checked={group.enabled}
         id={`group-${id}-enabled`}
         onChecked={toggleGroup}
         srLabel="Toggle group on/off"
-        className="inline-flex peer"
-      />
-      <span className="peer-hover:text-sky-700">{group.name}</span>
+        className="inline-flex group"
+      >
+        <span className="inline-block ml-2 group-hover:text-sky-700">
+          {group.name}
+        </span>
+      </Toggle>
     </li>
   );
 };

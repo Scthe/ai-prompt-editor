@@ -18,6 +18,7 @@ export const DiffInputCard = ({
   onImageSelected: (file: PromptImage | undefined) => void;
 }) => {
   const promptTextRef = usePromptTextRef();
+  const editorLabelId = `prompt-input-${id}-label`;
 
   return (
     <Card
@@ -35,6 +36,7 @@ export const DiffInputCard = ({
         />
 
         <SectionHeader
+          id={editorLabelId}
           actions={
             <CopyToClipboardBtn
               id={`diff-input-${id}`}
@@ -49,6 +51,7 @@ export const DiffInputCard = ({
           initialPrompt={initialPrompt}
           onPromptChanged={prompt.parsePromptDebounced}
           textRef={promptTextRef}
+          labelledById={editorLabelId}
         />
       </CardContent>
     </Card>

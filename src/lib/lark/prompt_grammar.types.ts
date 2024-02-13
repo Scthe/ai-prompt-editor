@@ -243,7 +243,7 @@ export type AlternateASTNode = ASTNode<'alternate', Array<PromptASTNode>>;
 export type PromptASTNode = ASTNode<
   'prompt',
   Array<
-    | PlainASTNode //
+    | PlainASTNode
     | Emphasized3_ASTNode
     | Emphasized5_ASTNode
     | Scheduled_ASTNode

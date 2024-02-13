@@ -34,7 +34,7 @@ export const Card = ({
   } as React.CSSProperties;
 
   return (
-    <div
+    <section
       ref={wrapperRef}
       style={combinedStyle}
       className={cx(
@@ -47,6 +47,6 @@ export const Card = ({
       )}
     >
       {children}
-    </div>
+    </section>
   );
 };

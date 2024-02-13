@@ -1,6 +1,7 @@
 import Icon from '@mdi/react';
 import { mdiPlus } from '@mdi/js';
 import React from 'react';
+import cx from 'classnames';
 import useEditorGroupsStore from 'pages/editor/editorStore';
 import { SR_IGNORE_SVG } from 'components';
 
@@ -12,7 +13,7 @@ export const AddNewGroupBtn = () => {
     <button
       type="button"
       onClick={addNewGroup}
-      className="text-gray-700 transition-colors border-b-4 border-transparent hover:text-gray-900 hover:border-sky-500"
+      className="overflow-hidden text-gray-700 transition-colors hover:text-gray-900 group"
     >
       <Icon
         path={mdiPlus}
@@ -21,6 +22,12 @@ export const AddNewGroupBtn = () => {
         {...SR_IGNORE_SVG}
       />
       <span>Add new group</span>
+      <div
+        className={cx(
+          'border-b-4 border-sky-500 transition-transform',
+          '-translate-x-full group-hover:translate-x-0'
+        )}
+      ></div>
     </button>
   );
 };

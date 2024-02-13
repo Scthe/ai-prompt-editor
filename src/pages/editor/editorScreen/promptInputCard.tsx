@@ -53,6 +53,7 @@ export const PromptInputCard = ({ group, parsePrompt }: Props) => {
           initialPrompt={group.initialPrompt}
           onPromptChanged={parsePrompt}
           textRef={promptTextRef}
+          ariaLabel={`Prompt for group ${group.name}`}
         />
       </CardContent>
     </Card>

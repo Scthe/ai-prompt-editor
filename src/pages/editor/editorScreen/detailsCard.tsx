@@ -1,7 +1,13 @@
 import React from 'react';
 import cx from 'classnames';
 import { EditorGroup } from '../types';
-import { CARD_SHADOW_GRAY, Card, CardContent, CardToolbar } from 'components';
+import {
+  CARD_SHADOW_GRAY,
+  Card,
+  CardContent,
+  CardContentAnimatedHeight,
+  CardToolbar,
+} from 'components';
 import PromptLoader from 'components/loaders';
 import {
   PromptDetailsTabs,
@@ -21,10 +27,9 @@ interface Props {
 export const DetailsCard = ({ group, parsingResult, isParsing }: Props) => {
   const setActiveTab = useEditorGroupsStore((s) => s.setDetailsTab);
   const isLoading = isParsing || !parsingResult;
+  const isDragging = useIsDraggingAnyGroup();
 
   parsingResult = parsingResult || EMPTY_PARSING_RESULT;
-
-  const isDragging = useIsDraggingAnyGroup();
 
   return (
     <Card
@@ -32,7 +37,8 @@ export const DetailsCard = ({ group, parsingResult, isParsing }: Props) => {
       shadowColor={group.enabled ? undefined : CARD_SHADOW_GRAY}
       className={cx(isDragging && 'opacity-10')}
     >
-      {isLoading ? <PromptLoader /> : undefined}
+      <PromptLoader visible={isLoading} />
+      <h2 className="sr-only">Prompt details for group {group.name}</h2>
 
       <CardToolbar>
         <PromptDetailsTabs
@@ -43,12 +49,14 @@ export const DetailsCard = ({ group, parsingResult, isParsing }: Props) => {
         />
       </CardToolbar>
 
-      <CardContent>
-        <PromptDetailsContent
-          activeTab={group.tab}
-          parsingResult={parsingResult}
-        />
-      </CardContent>
+      <CardContentAnimatedHeight triggerKey={group.tab}>
+        <CardContent>
+          <PromptDetailsContent
+            activeTab={group.tab}
+            parsingResult={parsingResult}
+          />
+        </CardContent>
+      </CardContentAnimatedHeight>
     </Card>
   );
 };

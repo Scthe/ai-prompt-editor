@@ -10,6 +10,16 @@
 }
 
 @layer base {
+  *:focus,
+  *:active {
+    @apply outline-none !important;
+  }
+
+  /* default styling for browser-handled focus */
+  *:focus-visible {
+    @apply ring-2;
+    @apply ring-rose-500;
+  }
 }
 
 @layer utilities {
@@ -19,5 +29,28 @@
 
   .text-lora {
     color: var(--text-lora);
+  }
+
+  .focus-within-custom:focus-within {
+    @apply outline-none !important;
+    @apply ring-rose-500 !important;
+  }
+
+  .focus-visible-custom:focus-visible {
+    @apply outline-none !important;
+    @apply ring-rose-500 !important;
+  }
+
+  .focus-visible-within-custom:has(:focus-visible) {
+    @apply outline-none !important;
+    @apply ring-rose-500 !important;
+    @apply ring-2;
+  }
+
+  /* Use when the default focus rule (*:focus-visible) applies,
+     but you do not want it. Removes the 'ring-rose-500' outline.
+   */
+  .focus-ignore-default:focus-visible {
+    @apply ring-transparent !important;
   }
 }

@@ -1,7 +1,7 @@
 import React, { ChangeEvent, InputHTMLAttributes, useCallback } from 'react';
 import cx from 'classnames';
 
-interface Props {
+interface Props extends React.PropsWithChildren {
   id: string;
   srLabel: string;
   checked: boolean;
@@ -14,6 +14,7 @@ export const Toggle = ({
   srLabel,
   checked,
   className,
+  children,
   onChecked,
 }: Props) => {
   const onChange = useCallback(
@@ -32,8 +33,10 @@ export const Toggle = ({
   return (
     <label
       htmlFor={id}
+      title={srLabel}
       className={cx(
-        `flex items-center cursor-pointer select-none group ${className}`
+        `flex items-center cursor-pointer select-none group ${className}`,
+        'focus-visible-within-custom'
       )}
     >
       <div className="relative">
@@ -61,6 +64,8 @@ export const Toggle = ({
         ></div>
         <span className="sr-only">{srLabel}</span>
       </div>
+
+      {children}
     </label>
   );
 };
