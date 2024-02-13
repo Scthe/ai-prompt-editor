@@ -2,17 +2,18 @@
 // Cheatsheet: https://lark-parser.readthedocs.io/en/latest/_static/lark_cheatsheet.pdf
 // Note: rules are only lowercase, add them to 'prompt' alternative
 
-!start: (prompt | /[][():]/+)*
-// Original:
-// prompt: (emphasized | scheduled | alternate | plain | WHITESPACE)*
-prompt: (emphasized | scheduled | scheduledremove | alternate | plain | WHITESPACE)
+// LALR: removed '*' at the end, I think one in 'prompt' should be enough?
+!start: (prompt | /[][():]/+)
+// LALR: Added 'scheduledremove', see below
+prompt: (emphasized | scheduled | alternate | scheduledremove | plain | WHITESPACE)*
 !emphasized: "(" prompt ")"
         | "(" prompt ":" prompt ")"
         | "[" prompt "]"
 scheduled: "[" [prompt ":"] prompt ":" [WHITESPACE] NUMBER [WHITESPACE] "]"
-// New rule, cause LALR does not allow `[from::0.25]` with `scheduled`
+// LALR: New rule, LALR does not allow `[from::0.25]` with `scheduled`
 scheduledremove: "[" prompt "::" [WHITESPACE] NUMBER [WHITESPACE] "]"
-alternate: "[" prompt ("|" [prompt])+ "]"
+// LALR: Changed to limit recursions. Are you really have more than 6 alternates?
+alternate: "[" prompt ("|" [prompt])~1..5 "]"
 WHITESPACE: /\s+/
 plain: /([^\\\[\]():|]|\\.)+/
 %import common.SIGNED_NUMBER -> NUMBER

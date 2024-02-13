@@ -5,42 +5,42 @@ import {
   PromptASTNode,
 } from 'lib/lark/prompt_grammar.types';
 import {
-  PromptAstAlternate,
   PromptAstGroup,
-  PromptAstScheduled,
-  PromptAstToken,
+  PromptAstNode,
   newAstAlternate,
   newAstGroup,
   newAstScheduled,
   newAstToken,
 } from './types';
-import { assertUnreachable } from 'utils';
+import { ItemType, assertUnreachable } from 'utils';
 
 export const parse = (text: string) => {
   const startToken = larkTokenize(text);
 
   const root = newAstGroup(undefined, 'curly_bracket');
   root.children = startToken.children
-    .map((tk) => parseTokens(text, tk, root))
+    .map((tk) => parsePromptNode(text, tk, root))
     .flat();
 
   return root;
 };
 
-const parseTokens = (
+const parsePromptNode = (
   originalText: string,
   promptNode: PromptASTNode,
   parent: PromptAstGroup | undefined
-):
-  | PromptAstToken[]
-  | [PromptAstScheduled]
-  | [PromptAstGroup]
-  | [PromptAstAlternate] => {
-  if (promptNode.children.length !== 1) {
-    throw new Error('Encountered PromptASTNode with more then 1 child');
-  }
-  const node = promptNode.children[0];
+): PromptAstNode[] => {
+  // console.log(promptNode);
+  return promptNode.children.flatMap((e) =>
+    parsePromptSubType(originalText, e, parent)
+  );
+};
 
+const parsePromptSubType = (
+  originalText: string,
+  node: ItemType<PromptASTNode['children']>,
+  parent: PromptAstGroup | undefined
+): PromptAstNode[] => {
   switch (node.data) {
     case 'plain': {
       const text = plainNodeText(node);
@@ -51,7 +51,7 @@ const parseTokens = (
       const bracket =
         node.children[0].value === '[' ? 'square_bracket' : 'curly_bracket';
       const grp = newAstGroup(parent, bracket);
-      grp.children = parseTokens(originalText, node.children[1], grp);
+      grp.children = parsePromptNode(originalText, node.children[1], grp);
 
       if (node.children.length === 5) {
         const weightText = getTextIfHasOnePlainChild(node.children[3]);

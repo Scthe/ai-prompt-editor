@@ -145,6 +145,24 @@ describe('parser-lark', () => {
     expectAst(result, wrapInRoot(expectedAst));
   });
 
+  /** real live sample I had problem with */
+  test('should parse "landscape,(forest ((castle far away))),ocean,"', () => {
+    const prompt = 'landscape,(forest ((castle far away))),ocean,';
+    const result = parse(prompt);
+    // debug(result);
+
+    const expectedAst = [
+      text('landscape'),
+      curly(
+        undefined,
+        text('forest'),
+        curly(undefined, curly(undefined, text('castle far away')))
+      ),
+      text('ocean'),
+    ];
+    expectAst(result, wrapInRoot(...expectedAst));
+  });
+
   describe('scheduled', () => {
     test.each([
       ['[from:to:0.25]', 'from', 'to', 0.25],
@@ -213,9 +231,6 @@ aaa,(bbb,ccc
       }).toThrowErrorMatchingInlineSnapshot(`
 "Parser error: the parser received an unexpected token. Expected one of: 
 	* $END
-	* LPAR: (
-	* LSQB: [
-	* WHITESPACE: \\s+
 Error in:
 aaa,:(bbb,ccc
    ^"
