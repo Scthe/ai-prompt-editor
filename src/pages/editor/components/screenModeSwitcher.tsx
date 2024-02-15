@@ -13,15 +13,15 @@ export const ScreenModeSwitcher = ({
   return (
     <div
       className={cx(
-        'fixed z-50 text-base -translate-x-1/2 left-1/2',
+        'fixed z-20 text-base -translate-x-1/2 left-1/2',
         'bottom-2 md:bottom-auto md:top-4' // placement
       )}
     >
-      <div className="relative grid grid-cols-2 overflow-hidden text-gray-900 capitalize rounded-md shadow-xl w-fit bg-zinc-100">
+      <div className="relative grid grid-cols-2 overflow-hidden capitalize border rounded-md shadow-xl w-fit bg-card border-elevated">
         {/* moving background */}
         <div
           className={cx(
-            'absolute top-0 left-0 h-full w-1/2 bg-sky-500 pointer-events-none transition-[left]',
+            'absolute top-0 left-0 h-full w-1/2 bg-accent-500 pointer-events-none transition-[left]',
             activeMode === 'editor' ? 'left-0' : 'left-1/2'
           )}
         ></div>
@@ -46,7 +46,7 @@ export const ScreenModeSwitcher = ({
               // usual active stuff
               mode === activeMode
                 ? 'text-white pointer-events-none'
-                : 'cursor-pointer hover:bg-sky-200 '
+                : 'cursor-pointer hover:bg-interactive '
             )}
           >
             {mode}

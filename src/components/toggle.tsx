@@ -51,7 +51,7 @@ export const Toggle = ({
           className={cx(
             'block h-8 transition-colors rounded-full w-14',
             checked
-              ? 'bg-sky-500 group-hover:bg-sky-400'
+              ? 'bg-accent-500 group-hover:bg-accent-400'
               : 'bg-gray-500 group-hover:bg-gray-400'
           )}
         ></div>

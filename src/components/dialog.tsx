@@ -59,13 +59,13 @@ export const Dialog = ({
   return (
     <motion.dialog
       ref={dialogRef}
-      className="bg-transparent-10"
+      className="bg-transparent"
       initial={{
         opacity: 0,
         y: MODAL_ANIMATION_Y,
       }}
     >
-      <Card className="text-gray-800">
+      <Card className="text-gray-800 dark:text-gray-200">
         {children}
 
         <DialogButtonsRow buttons={buttons} />

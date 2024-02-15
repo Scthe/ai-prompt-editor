@@ -3,10 +3,12 @@
 @tailwind utilities;
 
 :root {
-  @apply bg-gray-300;
-  @apply text-zinc-800;
-  --text-lora: theme('colors.sky.500');
-  color: #131313;
+  @apply bg-page-light;
+  @apply text-content-light;
+}
+.dark-theme:root {
+  @apply bg-page-dark;
+  @apply text-content-dark;
 }
 
 @layer base {
@@ -18,37 +20,69 @@
   /* default styling for browser-handled focus */
   *:focus-visible {
     @apply ring-2;
-    @apply ring-rose-500;
+    @apply ring-focused;
+  }
+
+  dialog[open]::backdrop {
+    @apply bg-black/50;
   }
 }
 
 @layer utilities {
-  .alternateRow:nth-child(odd) {
-    @apply bg-gray-200;
+  .bg-alternate-row {
+    @apply bg-gray-200 dark:bg-page-dark;
   }
 
-  .text-lora {
-    color: var(--text-lora);
+  .alternateRow:nth-child(odd) {
+    @apply bg-gray-200 dark:bg-page-dark;
   }
+
+  .bg-card {
+    @apply bg-card-light dark:bg-card-dark;
+  }
+
+  .bg-interactive {
+    @apply bg-interactive-light dark:bg-interactive-dark;
+  }
+
+  .bg-elevated {
+    @apply bg-elevated-light dark:bg-page-dark;
+  }
+
+  .border-elevated {
+    @apply border-elevated-light dark:border-page-dark;
+  }
+
+  .text-content {
+    @apply text-content-light dark:text-content-dark;
+  }
+
+  /* MISC */
+
+  .text-lora {
+    @apply text-sky-600 dark:text-sky-400;
+  }
+
+  /* FOCUS RELATED */
 
   .focus-within-custom:focus-within {
     @apply outline-none !important;
-    @apply ring-rose-500 !important;
+    @apply ring-focused !important;
   }
 
   .focus-visible-custom:focus-visible {
     @apply outline-none !important;
-    @apply ring-rose-500 !important;
+    @apply ring-focused !important;
   }
 
   .focus-visible-within-custom:has(:focus-visible) {
     @apply outline-none !important;
-    @apply ring-rose-500 !important;
+    @apply ring-focused !important;
     @apply ring-2;
   }
 
   /* Use when the default focus rule (*:focus-visible) applies,
-     but you do not want it. Removes the 'ring-rose-500' outline.
+     but you do not want it. Removes the 'ring-focused' outline.
    */
   .focus-ignore-default:focus-visible {
     @apply ring-transparent !important;

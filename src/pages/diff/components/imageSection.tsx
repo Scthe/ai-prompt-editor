@@ -57,10 +57,14 @@ export const ImageSection = ({ image }: Props) => {
           const bgGrey = idx % 2 === 0;
           return (
             <React.Fragment key={key}>
-              <div className={cx('px-2 py-1', bgGrey ? 'bg-gray-200' : '')}>
+              <div
+                className={cx('px-2 py-1', bgGrey ? 'bg-alternate-row' : '')}
+              >
                 {key}
               </div>
-              <div className={cx('px-2 py-1', bgGrey ? 'bg-gray-200' : '')}>
+              <div
+                className={cx('px-2 py-1', bgGrey ? 'bg-alternate-row' : '')}
+              >
                 {settings[key]}
               </div>
             </React.Fragment>

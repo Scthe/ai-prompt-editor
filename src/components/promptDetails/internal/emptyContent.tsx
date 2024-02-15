@@ -7,7 +7,5 @@ export const EmptyContent = ({
   text?: string;
   className?: string;
 }) => {
-  return (
-    <p className={`text-center py-2 text-gray-500 ${className}`}>{text}</p>
-  );
+  return <p className={`text-center py-2 opacity-60 ${className}`}>{text}</p>;
 };

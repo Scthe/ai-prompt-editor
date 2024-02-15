@@ -98,7 +98,7 @@ const Node = ({
     return <AlternatingRow tag="li">{text}</AlternatingRow>;
   }
   return (
-    <li className="inline-block px-1 py-1 my-1 mr-1 font-mono text-sm bg-gray-200 rounded-md last:mr-0">
+    <li className="inline-block px-1 py-1 my-1 mr-1 font-mono text-sm rounded-md bg-elevated last:mr-0">
       {text}
     </li>
   );

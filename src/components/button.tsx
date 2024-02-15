@@ -16,7 +16,7 @@ export const Button = ({ className, children, mode, size, ...rest }: Props) => {
       className={cx(
         `inline-flex justify-center text-base font-medium rounded-md transition-colors ${className}`,
         mode == 'danger' && 'text-red-500 hover:bg-red-100',
-        mode == 'normal' && 'hover:bg-gray-200',
+        mode == 'normal' && 'hover:bg-elevated',
         size === 'medium' && 'px-4 py-2'
       )}
       {...rest}

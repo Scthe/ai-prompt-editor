@@ -33,7 +33,7 @@ export const Tabs = <T extends string>({
 
   return (
     <div className={`flex flex-wrap justify-center ${className}`}>
-      <ul role="tablist" className="relative flex text-gray-900 capitalize">
+      <ul role="tablist" className="relative flex capitalize">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
           return (
@@ -115,14 +115,14 @@ export const Tab = <T extends string>({
 
         {/* hover. Setting 'border' on <a> messes up active's animation */}
         {!isActive ? (
-          <div className="absolute bottom-[-4px] left-0 w-0 group-hover:w-full h-1 bg-sky-300"></div>
+          <div className="absolute bottom-[-4px] left-0 w-0 group-hover:w-full h-1 bg-accent-300"></div>
         ) : undefined}
 
         {/* active indicator */}
         {isActive ? (
           <motion.div
             layoutId={id}
-            className="absolute left-0 w-full h-1 bottom-[-4px] bg-sky-500"
+            className="absolute left-0 w-full h-1 bottom-[-4px] bg-accent-500"
           ></motion.div>
         ) : undefined}
       </a>

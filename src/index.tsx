@@ -6,6 +6,7 @@ import ErrorPage from 'errorPage';
 import { ROUTES } from 'routes';
 import { isProductionBuild } from 'utils';
 import EditorPage from 'pages/editor';
+import { loadInitialColorAccent } from 'hooks/useColorAccent';
 
 (function () {
   if (!isProductionBuild()) {
@@ -16,6 +17,8 @@ import EditorPage from 'pages/editor';
     );
   }
 })();
+
+loadInitialColorAccent();
 
 const router = createHashRouter([
   {

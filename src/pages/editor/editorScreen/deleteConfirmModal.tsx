@@ -37,12 +37,12 @@ export const DeleteConfirmModal = ({
             className="mx-auto mb-4"
             {...SR_IGNORE_SVG}
           />
-          Permamently delete?
+          Permanently delete?
         </p>
 
-        <p className="px-10 text-gray-500">
+        <p className="px-10 opacity-90">
           Do you want to delete {'"'}
-          <span className="font-bold">{groupName}</span>
+          <span className="font-bold text-accent-500">{groupName}</span>
           {'"'}? This action is irreversible.
         </p>
       </div>

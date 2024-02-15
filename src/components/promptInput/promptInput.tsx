@@ -82,7 +82,8 @@ export function PromptInput({
     <div
       className={cx(
         className,
-        withBorder && 'border border-gray-700 rounded-sm'
+        withBorder &&
+          'border border-elevated-dark dark:border-elevated-light rounded-sm'
       )}
     >
       <Editor

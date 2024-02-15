@@ -31,9 +31,11 @@ export const GroupNameInput = ({ group }: Props) => {
     <h2 className={cx('inline-block grow shrink w-0 mr-2')}>
       <input
         className={cx(
-          `w-full max-w-full bg-transparent transition-colors outline-none active:outline-none focus:shadow-[0_4px_theme("colors.sky.500")]`,
+          `w-full max-w-full bg-transparent transition-colors outline-none active:outline-none focus:shadow-[0_4px_theme("colors.accent.500")]`,
           'focus-ignore-default',
-          enabled ? 'hover:text-sky-600' : 'text-gray-400 hover:text-gray-600'
+          enabled
+            ? 'hover:text-accent-600'
+            : 'text-gray-400 hover:text-gray-600'
         )}
         type="text"
         defaultValue={name}
