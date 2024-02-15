@@ -32,7 +32,7 @@ export const SectionHeader = ({
   actions?: React.ReactNode;
   id?: string;
 }>) => (
-  <div className={cx('mb-2 flex justify-between text-gray-900', className)}>
+  <div className={cx('mb-2 flex justify-between', className)}>
     <h3 id={id}>{children}</h3>
     {actions ? <div>{actions}</div> : undefined}
   </div>

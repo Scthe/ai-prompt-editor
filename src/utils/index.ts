@@ -1,6 +1,7 @@
 export * from './types';
 export * from './string';
 export * from './zustand';
+export * from './toggleTheme';
 
 declare global {
   const IS_PRODUCTION: boolean;

@@ -23,7 +23,7 @@ export default function ErrorPage() {
           <br />
           Do you want to{' '}
           <a
-            className="text-gray-700 transition-colors border-b-4 cursor-pointer hover:text-gray-900 hover:border-sky-500 border-sky-300"
+            className="text-gray-700 transition-colors border-b-4 cursor-pointer hover:text-gray-900 hover:border-accent-500 border-accent-300"
             href="/#"
           >
             go back

@@ -52,7 +52,7 @@ const Chunk = ({
             'before:absolute before:top-[11px] before:left-0 before:w-full before:border-b before:border-gray-300'
           )}
         >
-          <span className="relative px-5 bg-white">BREAK</span>
+          <span className="relative px-5 bg-card">BREAK</span>
         </p>
       ) : undefined}
       <ul role="list">

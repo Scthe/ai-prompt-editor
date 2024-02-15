@@ -3,8 +3,12 @@ import cx from 'classnames';
 import Icon from '@mdi/react';
 import { mdiArrowRight } from '@mdi/js';
 import { SR_IGNORE_SVG } from 'components';
+import styles from './topRightMenu.module.css';
+import { toggleTheme } from 'utils';
 
 type TargetPage = 'diff' | 'editor';
+
+const ICON_SIZE = 24;
 
 const PerPageData: Record<TargetPage, { label: string; href: string }> = {
   diff: { label: 'Diff tool', href: '#/diff/' },
@@ -17,9 +21,10 @@ interface Props {
 
 export const TopRightMenu = (props: Props) => {
   return (
-    <div className="fixed top-0 right-0 z-50">
-      <div className="relative flex overflow-hidden text-gray-900 capitalize shadow-xl rounded-bl-md w-fit bg-zinc-100">
+    <div className="fixed top-0 right-0 z-30">
+      <div className="relative flex capitalize border-b border-l shadow-xl border-elevated rounded-bl-md w-fit bg-card">
         <GithubBtn />
+        <ThemeToggleButton />
         <OtherAppBtn {...props} />
       </div>
     </div>
@@ -27,11 +32,11 @@ export const TopRightMenu = (props: Props) => {
 };
 
 const GithubBtn = () => {
-  const size = '24';
+  const size = ICON_SIZE;
   return (
     <a
       href="https://github.com/Scthe/ai-prompt-editor"
-      className="relative flex items-center px-4 py-2 font-medium focus:outline-none hover:bg-sky-200 ring-inset rounded-bl-md"
+      className={cx(styles.navbarIcon, 'rounded-bl-md hover:bg-interactive')}
       title="See the repo on GitHub"
     >
       <span className="sr-only">GitHub</span>
@@ -55,7 +60,7 @@ const OtherAppBtn = ({ targetPage }: Props) => {
     <a
       href={href}
       className={cx(
-        'block px-8 py-2 relative transition-colors cursor-pointer hover:bg-sky-200 ring-inset'
+        'block px-8 py-2 relative transition-colors cursor-pointer hover:bg-interactive ring-inset'
       )}
     >
       <span>{label}</span>
@@ -66,5 +71,42 @@ const OtherAppBtn = ({ targetPage }: Props) => {
         {...SR_IGNORE_SVG}
       />
     </a>
+  );
+};
+
+const ThemeToggleButton = () => {
+  const size = ICON_SIZE;
+  return (
+    <button
+      id="theme-toggle"
+      className={cx(
+        styles.navbarIcon,
+        'hover:bg-interactive',
+        styles.topNavThemeToggle
+      )}
+      aria-label="Toggle light/dark theme"
+      title="Toggle light/dark theme"
+      onClick={toggleTheme}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        width={size}
+        height={size}
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        <g className={styles.toggleSun}>
+          <g transform="translate(4 4)">
+            <rect width="16" height="16" />
+          </g>
+          <g transform="translate(12 1) rotate(45 0 0)">
+            <rect width="16" height="16" />
+          </g>
+        </g>
+
+        <circle cx="12" cy="12" r="7" />
+        <circle className={styles.toggleCircle} cx="12" cy="12" r="6" />
+      </svg>
+    </button>
   );
 };

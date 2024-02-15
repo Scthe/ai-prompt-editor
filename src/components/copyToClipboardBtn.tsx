@@ -92,7 +92,7 @@ export const CopyToClipboardBtn = ({
         size={1}
         className={cx(
           ELEMENT_ID.CopyBtn,
-          `${className} hover:text-sky-500`,
+          `${className} hover:text-accent-500`,
           state === 'idle' && 'cursor-pointer'
         )}
         {...SR_IGNORE_SVG}
@@ -104,7 +104,7 @@ export const CopyToClipboardBtn = ({
         className={cx(
           styles.animatedIcon,
           ELEMENT_ID.SuccesIcon,
-          `text-green-600 opacity-0`
+          `text-accent-500 opacity-0`
         )}
         {...SR_IGNORE_SVG}
       />

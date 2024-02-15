@@ -124,8 +124,9 @@ const DropZoneContent = ({
       className={cx(
         `transition-colors group`,
         // when not dragging
-        isIdle && 'hover:bg-sky-100 cursor-pointer',
-        isIdle && !preview && 'bg-gray-100 text-gray-600',
+        isIdle && 'cursor-pointer',
+        isIdle && preview && 'hover:bg-sky-100 dark:hover:bg-sky-100/20', // with image
+        isIdle && !preview && 'bg-gray-100 text-gray-600 hover:bg-sky-100', // graybox
         // drag response
         isDragAccept && 'bg-sky-500 text-white',
         isDragReject && 'bg-red-500 text-white'

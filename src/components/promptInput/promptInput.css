@@ -1,3 +1,19 @@
 .token.keyword {
-  color: var(--text-lora) !important;
+  @apply text-sky-600 dark:text-sky-400;
+}
+
+.token.number {
+  color: #2e8610;
+}
+
+.token.operator {
+  background: transparent !important;
+}
+
+.dark-theme .token.operator {
+  color: #c4a682 !important;
+}
+
+.dark-theme .token.number {
+  color: #5fc23c !important;
 }

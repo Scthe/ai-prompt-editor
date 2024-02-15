@@ -24,7 +24,9 @@ export const TokenTextContent = (props: Props) => {
     <>
       {name}
       {hideWeights2 ? undefined : (
-        <span className={'inline-block ml-1 text-indigo-600'}>
+        <span
+          className={'inline-block ml-1 text-indigo-600 dark:text-indigo-400'}
+        >
           {`:${weight.toFixed(2)}`}
         </span>
       )}

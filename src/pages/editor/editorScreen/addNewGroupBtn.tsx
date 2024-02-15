@@ -13,7 +13,7 @@ export const AddNewGroupBtn = () => {
     <button
       type="button"
       onClick={addNewGroup}
-      className="overflow-hidden text-gray-700 transition-colors hover:text-gray-900 group"
+      className="overflow-hidden transition-opacity opacity-80 hover:opacity-90 group"
     >
       <Icon
         path={mdiPlus}
@@ -24,7 +24,7 @@ export const AddNewGroupBtn = () => {
       <span>Add new group</span>
       <div
         className={cx(
-          'border-b-4 border-sky-500 transition-transform',
+          'border-b-4 border-accent-500 transition-transform',
           '-translate-x-full group-hover:translate-x-0'
         )}
       ></div>

@@ -38,12 +38,12 @@ export const Card = ({
       ref={wrapperRef}
       style={combinedStyle}
       className={cx(
-        `relative bg-white w-full rounded-sm ${className}`,
+        `relative bg-card w-full rounded-sm ${className}`,
         // shadow md and up
         shadowDirection &&
-          `md:shadow-[var(--shadow-x)_var(--shadow-y)_0_0px_var(--shadow-col,theme("colors.sky.500"))]`,
+          `md:shadow-[var(--shadow-x)_var(--shadow-y)_0_0px_var(--shadow-col,theme("colors.accent.500"))]`,
         borderTopOnMobile &&
-          `shadow-[0_var(--shadow-y)_0_0px_var(--shadow-col,theme("colors.sky.500"))]`
+          `shadow-[0_var(--shadow-y)_0_0px_var(--shadow-col,theme("colors.accent.500"))]`
       )}
     >
       {children}

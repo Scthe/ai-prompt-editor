@@ -16,7 +16,7 @@ export const ButtonGroup = <T extends string>({
   onSelected,
 }: ButtonGroupProps<T>): React.ReactElement => {
   return (
-    <div className="inline-flex gap-4 ml-4 text-gray-500" role="group">
+    <div className="inline-flex gap-4 ml-4 " role="group">
       {buttons.map(({ id, label }) => (
         <button
           key={id}
@@ -25,8 +25,8 @@ export const ButtonGroup = <T extends string>({
           className={cx(
             'cursor-pointer transition-colors',
             id === activeItem
-              ? 'text-sky-500 pointer-events-none'
-              : 'hover:text-sky-400'
+              ? 'text-accent-500 pointer-events-none'
+              : 'hover:text-accent-500 opacity-70'
           )}
         >
           {label}

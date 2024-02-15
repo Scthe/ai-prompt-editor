@@ -103,7 +103,7 @@ const GroupRow = ({ group }: { group: EditorGroup }) => {
         srLabel="Toggle group on/off"
         className="inline-flex group"
       >
-        <span className="inline-block ml-2 group-hover:text-sky-700">
+        <span className="inline-block ml-2 group-hover:text-accent-500">
           {group.name}
         </span>
       </Toggle>

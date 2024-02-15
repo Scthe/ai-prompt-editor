@@ -115,9 +115,9 @@ const DiffHeader = (props: {
       onClick={() => props.onClick(props.col)}
       className={cx(
         props.className,
-        'group cursor-pointer transition-colors hover:text-sky-400',
+        'group cursor-pointer transition-colors hover:text-accent-400',
         props.small && 'w-28',
-        isActive && 'text-sky-500'
+        isActive && 'text-accent-500'
       )}
     >
       <span className="">{text}</span>
@@ -142,7 +142,7 @@ const DiffRow = ({
   return (
     <tr
       className={cx(
-        'alternateRow hover:bg-sky-100',
+        'alternateRow hover:bg-interactive-light/50 hover:dark:bg-interactive-dark/20',
         isMobileLayout && 'flex flex-col p-2'
       )}
     >

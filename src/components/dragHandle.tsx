@@ -23,7 +23,7 @@ export function DragHandle({
   return (
     <button
       title={tooltip}
-      className={`transition-colors hover:text-sky-500 cursor-grab ${className}`}
+      className={`transition-colors hover:text-accent-500 cursor-grab ${className}`}
       {...attributes}
       {...listeners}
       ref={dragHandleRef}
