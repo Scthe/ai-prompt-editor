@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import cx from 'classnames';
 import Icon from '@mdi/react';
 import { mdiArrowRight } from '@mdi/js';
 import { SR_IGNORE_SVG } from 'components';
 import styles from './topRightMenu.module.css';
 import { toggleTheme } from 'utils';
+import { Button } from './button';
+import { TAILWIND_COLORS, TailwindColor } from 'hooks/useTailwindConfig';
+import { useColorAccentStore } from 'hooks/useColorAccent';
+import { useOnClickOutside } from 'hooks/useOnClickOutside';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type TargetPage = 'diff' | 'editor';
 
@@ -24,6 +29,7 @@ export const TopRightMenu = (props: Props) => {
     <div className="fixed top-0 right-0 z-30">
       <div className="relative flex capitalize border-b border-l shadow-xl border-elevated rounded-bl-md w-fit bg-card">
         <GithubBtn />
+        <AccentColorSelector />
         <ThemeToggleButton />
         <OtherAppBtn {...props} />
       </div>
@@ -108,5 +114,74 @@ const ThemeToggleButton = () => {
         <circle className={styles.toggleCircle} cx="12" cy="12" r="6" />
       </svg>
     </button>
+  );
+};
+
+/**
+ * Has same bg color as most of the page
+ *  So the bg-ripple animation etc. are hmm...
+ */
+const AccentColorSelector = () => {
+  const [expanded, setExpanded] = useState(false);
+  const wrapperRef = useRef(null);
+
+  useOnClickOutside(wrapperRef, () => setExpanded(false));
+
+  const [currentColor, setAccentColor] = useColorAccentStore((s) => [
+    s.color,
+    s.setAccentColor,
+  ]);
+
+  const toggleExpanded = useCallback(() => {
+    setExpanded((s) => !s);
+  }, []);
+
+  return (
+    <div ref={wrapperRef} className={cx(`relative hover:bg-interactive`)}>
+      <Button
+        onClick={toggleExpanded}
+        className="flex items-center h-full px-4"
+      >
+        <ColorDot color={currentColor} />
+      </Button>
+      <AnimatePresence>
+        {expanded ? (
+          <motion.div
+            key="accent-color-selector"
+            initial={{ opacity: 0, top: '120%' }}
+            animate={{ opacity: 1, top: '100%' }}
+            exit={{ opacity: 0, top: '120%' }}
+            className={cx(
+              'absolute z-20 left:0 bg-card top-full',
+              'grid grid-cols-4 w-[200px]',
+              'border border-elevated',
+              'rounded-tl-md rounded-bl-md rounded-br-md'
+            )}
+          >
+            {TAILWIND_COLORS.map((color) => (
+              <Button
+                key={color}
+                className={cx(`p-1 hover:bg-${color}-100`)}
+                onClick={() => {
+                  setAccentColor(color);
+                  setExpanded(false);
+                }}
+              >
+                <ColorDot color={color} />
+              </Button>
+            ))}
+          </motion.div>
+        ) : undefined}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const ColorDot = ({ color }: { color: TailwindColor }) => {
+  return (
+    <div
+      className={cx(`rounded-full bg-${color}-500`)}
+      style={{ width: `${ICON_SIZE}px`, height: `${ICON_SIZE}px` }}
+    ></div>
   );
 };

@@ -5,7 +5,14 @@ module.exports = {
   theme: {
     extend: {
       colors: ({ colors }) => {
-        const accent = colors.sky;
+        const accentFromCssVariables = Object.fromEntries(
+          Object.entries(colors.sky).map(([k, v]) => [
+            k,
+            `var(--clr_accent_${k}, ${v})`,
+          ])
+        );
+
+        const accent = accentFromCssVariables;
 
         return {
           accent,
