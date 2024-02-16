@@ -47,7 +47,6 @@ export function AstRenderer({
         <AlternatingRow depth={depth}>{bracketOpenText}</AlternatingRow>
       ) : undefined}
 
-      {/* TODO `key={idx}` is terrible */}
       {astGroup.children.map((childAstNode, idx) => (
         <AstNodeEl key={idx} nextDepth={nextDepth} node={childAstNode} />
       ))}

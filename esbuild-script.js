@@ -32,7 +32,7 @@ async function buildProd() {
   defineProductionFlag(true);
 
   config.minify = true;
-  config.format = 'esm';
+  // config.format = 'esm'; // produces invalid build? some module imports or smth. 'type="module"' in <script>?
   config.sourcemap = true;
   config.target = 'chrome100,firefox100,safari15'.split(',');
   await esbuild.build(config);

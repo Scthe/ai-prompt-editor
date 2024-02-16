@@ -12,5 +12,6 @@ export * from './iconButton';
 export * from './icons';
 export * from './loaders';
 export * from './pageTitle';
+export * from './table';
 export * from './tabs';
 export * from './topRightMenu';

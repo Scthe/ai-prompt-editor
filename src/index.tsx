@@ -7,6 +7,8 @@ import { ROUTES } from 'routes';
 import { isProductionBuild } from 'utils';
 import EditorPage from 'pages/editor';
 import { loadInitialColorAccent } from 'hooks/useColorAccent';
+import { resetDiffState } from 'pages/diff/diffStorePersist';
+import { resetEditorState } from 'pages/editor/editorStorePersist';
 
 (function () {
   if (!isProductionBuild()) {
@@ -35,3 +37,21 @@ root.render(
     <RouterProvider router={router} />
   </React.StrictMode>
 );
+
+declare global {
+  interface Window {
+    resetPersisted: () => void;
+  }
+}
+
+(function () {
+  try {
+    window.resetPersisted = function () {
+      resetEditorState();
+      resetDiffState();
+      window.location.reload();
+    };
+  } catch (e) {
+    console.error(e);
+  }
+})();

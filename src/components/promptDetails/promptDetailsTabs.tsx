@@ -5,7 +5,6 @@ import React from 'react';
 export type DetailsTab = 'list' | 'ast' | 'tokens' | 'messages';
 
 // TODO add 'variants' tab? For alternate/scheduled
-
 export const PromptDetailsTabs = ({
   id,
   parsingResult,

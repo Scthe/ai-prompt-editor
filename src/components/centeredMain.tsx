@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
 import cx from 'classnames';
-import PageTitle from '../../_references/migration/components/pageTitle';
 
 type Props = PropsWithChildren<{
   title?: string;
@@ -17,5 +16,13 @@ export function CenteredMain({ className, title, children }: Props) {
         {children}
       </div>
     </main>
+  );
+}
+
+function PageTitle({ title }: Props) {
+  return (
+    <div className="mt-10 mb-10 text-center">
+      <h1 className="inline text-4xl text-white">{title}</h1>
+    </div>
   );
 }

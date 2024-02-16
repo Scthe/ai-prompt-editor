@@ -14,7 +14,7 @@ export default function ResultScreen() {
 
   // This also sets intial value.
   // Less optimal if user would call this every 1ms, but good for now?
-  // TODO [LOW] very messy flow how this is initialized
+  // TODO very messy flow how this is initialized
   useEffect(() => {
     parsePromptImmediately(initialPrompt);
   }, [initialPrompt, parsePromptImmediately]);

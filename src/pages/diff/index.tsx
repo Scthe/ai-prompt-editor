@@ -1,20 +1,19 @@
 import { PageTitle, TopRightMenu } from 'components';
-import { useParsedPrompt, useSetInitialPrompt } from 'hooks/useParsedPrompt';
+import {
+  ParsedPrompt,
+  useParsedPrompt,
+  useSetInitialPrompt,
+} from 'hooks/useParsedPrompt';
 import React, { useCallback, useState } from 'react';
 import { DiffInputCard } from './components/diffInputCard';
 import { PromptImage } from './components/imageSelector';
 import { ResultCard } from './components/resultCard';
+import { INITAL_PROMPTS, persistDiffState } from './diffStorePersist';
+import { PromptId } from './types';
 
-const INITIAL_BEFORE =
-  'masterpiece, ((best quality)), (super prompt: 1.3), <lora:testLora:2.0> removedOne';
-const INITIAL_AFTER =
-  'masterpiece, (best quality), (super prompt: 1.1), <lora:testLora:0.3> newOne';
-
-// TODO both prompts have own color scheme? left-sky, right-pink
-// TODO swap?
 export default function DiffPage() {
-  const promptA = useDiffPrompt(INITIAL_BEFORE);
-  const promptB = useDiffPrompt(INITIAL_AFTER);
+  const promptA = useDiffPrompt('before', INITAL_PROMPTS.before);
+  const promptB = useDiffPrompt('after', INITAL_PROMPTS.after);
 
   return (
     <main className="relative max-w-screen-xl min-h-screen px-2 pt-20 pb-8 mx-auto md:px-4">
@@ -43,13 +42,29 @@ export default function DiffPage() {
 }
 
 // TODO move to zustand?
-const useDiffPrompt = (intialPrompt: string) => {
+const useDiffPrompt = (id: PromptId, intialPrompt: string) => {
   const [lastResetPrompt, setLastResetPrompt] = useState<string>(intialPrompt);
 
   const parsedPrompt = useParsedPrompt();
   useSetInitialPrompt(parsedPrompt, intialPrompt);
 
-  const { parsePromptImmediately } = parsedPrompt;
+  const parsePromptImmediately: ParsedPrompt['parsePromptImmediately'] =
+    useCallback(
+      (text) => {
+        persistDiffState(id, text);
+        parsedPrompt.parsePromptImmediately(text);
+      },
+      [id, parsedPrompt]
+    );
+
+  const parsePromptDebounced: ParsedPrompt['parsePromptDebounced'] =
+    useCallback(
+      (text) => {
+        persistDiffState(id, text);
+        parsedPrompt.parsePromptDebounced(text);
+      },
+      [id, parsedPrompt]
+    );
 
   const [image, setImage] = useState<PromptImage | undefined>(undefined);
   const onImageSelected = useCallback(
@@ -71,5 +86,7 @@ const useDiffPrompt = (intialPrompt: string) => {
     image,
     onImageSelected,
     ...parsedPrompt,
+    parsePromptImmediately,
+    parsePromptDebounced,
   };
 };

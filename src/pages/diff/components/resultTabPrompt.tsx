@@ -20,6 +20,10 @@ export const ResultTabPrompt = ({ diffTab, data }: Props) => {
 
   return (
     <div className="max-w-screen-md px-2 pb-10 mx-auto text-gray-700 dark:text-gray-300">
+      <h2 className="sr-only">
+        Data for prompt {diffTab === 'before' ? 'before' : 'after'}
+      </h2>
+
       {/* key, cause <Prompt> can be.. resistant to changes */}
       <ImageSection key={diffTab} image={image} />
 

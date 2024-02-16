@@ -16,24 +16,25 @@ const FILTER_LABELS: ButtonInGroupDef<DffFilter>[] = [
   { id: 'all', label: 'All' },
   { id: 'only added', label: 'Added' },
   { id: 'only removed', label: 'Removed' },
-  { id: 'only changed', label: 'Modified' },
+  { id: 'only changed', label: 'Changed' },
   { id: 'shared', label: 'Shared' },
 ];
 
 export const ResultTabDiff = (props: ResultCardProps) => {
   const [filter, setFilter] = useState<DffFilter>('all');
 
-  const [notChanged, tokenDiffs] = useDiffAstTrees(props);
-  const shownDiffs = tokenDiffs.filter((e) => isDiffEntryShown(filter, e));
-  const data = filter === 'shared' ? notChanged : shownDiffs;
+  const [notChanged, changed] = useDiffAstTrees(props);
+  const shownDiffs = changed.filter((e) => isDiffEntryShown(filter, e));
+  const finalShownData = filter === 'shared' ? notChanged : shownDiffs;
 
-  const emptyMsg =
-    tokenDiffs.length === 0
-      ? 'There are no differences'
-      : `No matches for current filter`;
+  const hasRowsInAllTab = notChanged.length + changed.length > 0;
+  const emptyMsg = hasRowsInAllTab
+    ? 'No matches for current filter'
+    : 'There are no differences';
 
   return (
     <>
+      <h2 className="sr-only">Diff between prompt before and after</h2>
       <div className="mt-2 mb-6 font-medium">
         <span>Show:</span>
         <ButtonGroup
@@ -42,10 +43,10 @@ export const ResultTabDiff = (props: ResultCardProps) => {
           buttons={FILTER_LABELS}
         />
       </div>
-      {shownDiffs.length === 0 ? (
+      {finalShownData.length === 0 ? (
         <EmptyContent text={emptyMsg} className="mb-6" />
       ) : (
-        <AstDiffTable tokenDiffs={data} />
+        <AstDiffTable tokenDiffs={finalShownData} />
       )}
     </>
   );

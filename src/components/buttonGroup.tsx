@@ -23,7 +23,7 @@ export const ButtonGroup = <T extends string>({
           type="button"
           onClick={() => onSelected(id)}
           className={cx(
-            'cursor-pointer transition-colors',
+            'cursor-pointer transition-[color,opacity]',
             id === activeItem
               ? 'text-accent-500 pointer-events-none'
               : 'hover:text-accent-500 opacity-70'

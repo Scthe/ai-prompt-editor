@@ -32,7 +32,6 @@ interface Props {
   parsingResult: ParsingResult;
 }
 
-// TODO [LOW] add 'copy to clipboard flattened'
 export function PromptAsList({ parsingResult }: Props) {
   const [sortOrder, setSortOrder] = useState<SortOrder>('prompt');
   const [displayMode, setDisplayMode] = useState<DisplayMode>('pill');

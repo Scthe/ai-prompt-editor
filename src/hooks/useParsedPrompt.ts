@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useEffectOnce } from './useEffectOnce';
-import { useLatest } from '../../_references/hooks/useLatest';
 import { ParsingResult } from 'parser';
+import { useLatest } from './useLatest';
 
 const PARSE_DEBOUNCE_MS = 2000;
 

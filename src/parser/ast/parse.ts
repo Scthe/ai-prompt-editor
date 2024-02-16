@@ -56,7 +56,8 @@ const parsePromptSubType = (
       if (node.children.length === 5) {
         const weightText = getTextIfHasOnePlainChild(node.children[3]);
         if (weightText !== undefined) {
-          grp.textWeight = parseFloat(weightText); // TODO handle NaN?
+          // TODO handle NaN? Other places too
+          grp.textWeight = parseFloat(weightText);
         }
       }
       return [grp];

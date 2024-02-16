@@ -17,7 +17,6 @@ interface Props {
   hideBreak?: boolean;
 }
 
-// TODO add 'what is this' help dialog. Add this to all tabs.
 export function TokensList({ parsingResult, hideBreak }: Props) {
   const { tokenChunks } = parsingResult;
 

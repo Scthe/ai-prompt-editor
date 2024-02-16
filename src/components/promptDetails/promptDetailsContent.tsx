@@ -14,7 +14,6 @@ interface Props {
   hideBreakOnTokensList?: boolean;
 }
 
-// TODO add optimize feature that removes duplicates? And flattens the prompt?
 export const PromptDetailsContent = ({
   activeTab,
   parsingResult,

@@ -4,40 +4,7 @@ import { logger, arrayMove } from 'utils';
 import { EditorGroup, EditorGroupId, newGroup } from 'pages/editor/types';
 import debounce from 'debounce';
 import { DetailsTab } from 'components/promptDetails';
-
-const INITIAL_STATE: EditorGroup[] = [
-  {
-    ...newGroup(),
-    name: 'My super style',
-    initialPrompt:
-      'masterpiece,best quality, (realistic,photorealistic:1.3),(highly detailed, colorful),[vibrant colors],(soft light),absurdres,',
-  },
-  {
-    ...newGroup(),
-    name: 'Subject',
-    initialPrompt:
-      'landscape,(forest ((castle far away))),ocean,river,tree,cloud,sky,grass',
-  },
-  {
-    ...newGroup(),
-    name: 'Environment and misc',
-    initialPrompt:
-      'night,starry sky,nebula,landscape,horizon,nature,mountain, (Fujifilm XT3), (photorealistic:1.3),beautiful detailed sky',
-  },
-  {
-    ...newGroup(),
-    name: 'BREAK preview',
-    initialPrompt:
-      'flowers, roses,beach, fantasy,moon, smoke, fire, key visual BREAK after break',
-  },
-  {
-    ...newGroup(),
-    name: 'Test - alternate, scheduled',
-    enabled: false,
-    initialPrompt:
-      '(111) ([fromA:toA:0.25]) 222, [toB:0.35], 333, [fromC::0.45], 444, [aaaD|bbD], 555, [aaaE|bbE|cE], 666',
-  },
-];
+import { INITIAL_STATE, persistEditorState } from './editorStorePersist';
 
 interface EditorState {
   groups: EditorGroup[];
@@ -60,28 +27,33 @@ const useEditorGroupsStore = create<EditorState>(
         const { groups } = get();
         const newGr = newGroup();
         set({ groups: [...groups, newGr] });
+        persistEditorState(get().groups);
       },
       removeGroup: (id: EditorGroupId) => {
         const { groups } = get();
         set({ groups: groups.filter((g) => g.id !== id) });
+        persistEditorState(get().groups);
       },
       setDetailsTab: (id: EditorGroupId, tab: DetailsTab) => {
         const { groups } = get();
         set({
           groups: mapWithChange(groups, id, (g) => ({ ...g, tab })),
         });
+        persistEditorState(get().groups);
       },
       setGroupEnabled: (id: EditorGroupId, enabled: boolean) => {
         const { groups } = get();
         set({
           groups: mapWithChange(groups, id, (g) => ({ ...g, enabled })),
         });
+        persistEditorState(get().groups);
       },
       setName: (id: EditorGroupId, name: string) => {
         const { groups } = get();
         set({
           groups: mapWithChange(groups, id, (g) => ({ ...g, name })),
         });
+        persistEditorState(get().groups);
       },
       // dragging:
       draggedGroup: undefined,
@@ -123,11 +95,11 @@ const mapWithChange = (
 };
 
 const storeCurrentTextNow = (groupId: EditorGroupId, text: string) => {
-  const group = useEditorGroupsStore
-    .getState()
-    .groups.find((g) => g.id === groupId);
+  const groups = useEditorGroupsStore.getState().groups;
+  const group = groups.find((g) => g.id === groupId);
   if (group) {
     group.currentPrompt = text;
+    persistEditorState(groups);
   }
 };
 

@@ -2,12 +2,17 @@ import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
 import { DiffColumnsSort } from 'pages/diff/types';
 import { SortOrder, oppositeSortOrder } from 'utils';
-import { mdiTriangle, mdiTriangleDown } from '@mdi/js';
-import Icon from '@mdi/react';
 import { SORTERS } from 'parser/diff/sort';
 import { PromptDiff, PromptDiffEntry, stringifyDiffDelta } from 'parser';
 import { TokenTextContent } from './internal/tokenTextContent';
 import { useIsTailwindScreenBreakpoint } from 'hooks/useTailwindConfig';
+import {
+  Table,
+  TableHeaderRow,
+  TableMobileLabel,
+  TableRow,
+  TableSortIcons,
+} from 'components';
 
 const COLUMN_LABELS: Record<DiffColumnsSort, string> = {
   change: 'Change',
@@ -16,6 +21,7 @@ const COLUMN_LABELS: Record<DiffColumnsSort, string> = {
   token: 'Token',
 };
 
+// TODO cannot sort on mobile
 export function AstDiffTable({ tokenDiffs }: { tokenDiffs: PromptDiff }) {
   const [sortCol, setSortCol] = useState<DiffColumnsSort>('token');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
@@ -40,51 +46,42 @@ export function AstDiffTable({ tokenDiffs }: { tokenDiffs: PromptDiff }) {
   }, [sortCol, sortOrder, tokenDiffs]);
 
   return (
-    <table
+    <Table
+      id="diff-table"
+      caption="Comparison between before and after prompts"
       className="w-full text-left whitespace-no-wrap table-fixed"
-      tabIndex={0}
     >
-      <caption id="diff-table-caption" className="sr-only">
-        Comparison between before and after prompts
-      </caption>
-      <thead>
-        <tr
-          className={cx(
-            'text-center bg-zinc-100 text-zinc-800',
-            isMobileLayout && 'hidden'
-          )}
-        >
-          <DiffHeader
-            col="change"
-            small
-            className="py-2"
-            activeSortCol={sortCol}
-            activeSortOrder={sortOrder}
-            onClick={onChangeSort}
-          />
-          <DiffHeader
-            col="before"
-            small
-            activeSortCol={sortCol}
-            activeSortOrder={sortOrder}
-            onClick={onChangeSort}
-          />
-          <DiffHeader
-            col="after"
-            small
-            activeSortCol={sortCol}
-            activeSortOrder={sortOrder}
-            onClick={onChangeSort}
-          />
-          <DiffHeader
-            col="token"
-            className="px-4 text-left"
-            activeSortCol={sortCol}
-            activeSortOrder={sortOrder}
-            onClick={onChangeSort}
-          />
-        </tr>
-      </thead>
+      <TableHeaderRow className={cx('text-center', isMobileLayout && 'hidden')}>
+        <DiffHeader
+          col="change"
+          small
+          className="py-2"
+          activeSortCol={sortCol}
+          activeSortOrder={sortOrder}
+          onClick={onChangeSort}
+        />
+        <DiffHeader
+          col="before"
+          small
+          activeSortCol={sortCol}
+          activeSortOrder={sortOrder}
+          onClick={onChangeSort}
+        />
+        <DiffHeader
+          col="after"
+          small
+          activeSortCol={sortCol}
+          activeSortOrder={sortOrder}
+          onClick={onChangeSort}
+        />
+        <DiffHeader
+          col="token"
+          className="px-4 text-left"
+          activeSortCol={sortCol}
+          activeSortOrder={sortOrder}
+          onClick={onChangeSort}
+        />
+      </TableHeaderRow>
       <tbody>
         {data.map((tokenDiff) => (
           <DiffRow
@@ -94,7 +91,7 @@ export function AstDiffTable({ tokenDiffs }: { tokenDiffs: PromptDiff }) {
           />
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 }
 
@@ -108,7 +105,6 @@ const DiffHeader = (props: {
 }) => {
   const text = COLUMN_LABELS[props.col];
   const isActive = props.activeSortCol === props.col;
-  const isAsc = props.activeSortOrder === 'asc';
 
   return (
     <th
@@ -120,14 +116,8 @@ const DiffHeader = (props: {
         isActive && 'text-accent-500'
       )}
     >
-      <span className="">{text}</span>
-      {isActive ? (
-        <Icon
-          className="inline-block ml-1 translate-y-[-2px]"
-          path={isAsc ? mdiTriangle : mdiTriangleDown}
-          size={0.5}
-        />
-      ) : undefined}
+      <span>{text}</span>
+      <TableSortIcons isVisible={isActive} order={props.activeSortOrder} />
     </th>
   );
 };
@@ -140,31 +130,32 @@ const DiffRow = ({
   isMobileLayout: boolean;
 }) => {
   return (
-    <tr
-      className={cx(
-        'alternateRow hover:bg-interactive-light/50 hover:dark:bg-interactive-dark/20',
-        isMobileLayout && 'flex flex-col p-2'
-      )}
-    >
-      <td
-        className={cx(
-          'py-1 font-mono',
-          isMobileLayout ? 'block' : 'text-center'
-        )}
-      >
-        <MobileLabel isMobileLayout={isMobileLayout} col="change" />
+    <TableRow isMobileLayout={isMobileLayout}>
+      <td className={cx('font-mono', isMobileLayout ? 'block' : 'text-center')}>
+        <TableMobileLabel
+          isMobileLayout={isMobileLayout}
+          label={COLUMN_LABELS.change}
+        />
         <TokenDelta tokenDiff={tokenDiff} />
       </td>
       <td className={cx('font-mono', isMobileLayout ? 'block' : 'text-center')}>
-        <MobileLabel isMobileLayout={isMobileLayout} col="before" />
-        <WeightValue value={tokenDiff.weightA} otherValue={tokenDiff.weightB} />
+        <TableMobileLabel
+          isMobileLayout={isMobileLayout}
+          label={COLUMN_LABELS.before}
+        />
+        <WeightValue value={tokenDiff.weightA} />
       </td>
       <td className={cx('font-mono', isMobileLayout ? 'block' : 'text-center')}>
-        <MobileLabel isMobileLayout={isMobileLayout} col="after" />
-        <WeightValue value={tokenDiff.weightB} otherValue={tokenDiff.weightA} />
+        <TableMobileLabel
+          isMobileLayout={isMobileLayout}
+          label={COLUMN_LABELS.after}
+        />
+        <WeightValue value={tokenDiff.weightB} />
       </td>
-      <th className={isMobileLayout ? 'order-[-1]' : 'px-4'} scope="row">
-        <MobileLabel isMobileLayout={isMobileLayout} col="token" />
+      <th
+        className={cx('py-2', isMobileLayout ? 'order-[-1]' : 'px-4')}
+        scope="row"
+      >
         <TokenTextContent
           name={tokenDiff.name}
           type={tokenDiff.type}
@@ -172,43 +163,23 @@ const DiffRow = ({
           hideWeights
         />
       </th>
-    </tr>
+    </TableRow>
   );
 };
 
-const MobileLabel = ({
-  col,
-  isMobileLayout,
-}: {
-  col: DiffColumnsSort;
-  isMobileLayout: boolean;
-}) => {
-  const text = COLUMN_LABELS[col];
-  return isMobileLayout ? (
-    <span className="inline-block mr-2">{text}:</span>
-  ) : undefined;
-};
-
-const WeightValue = ({
-  value,
-  otherValue,
-}: {
-  value: number | undefined;
-  otherValue: number | undefined;
-}) => {
+const WeightValue = ({ value }: { value: number | undefined }) => {
   const txt = value?.toFixed(2) || '-';
-  const isSmaller = value === undefined || (otherValue && otherValue > value);
-  return <span className={cx(isSmaller ? '' : 'text-sky-500')}>{txt}</span>;
+  return <span>{txt}</span>;
 };
 
 function TokenDelta({ tokenDiff }: { tokenDiff: PromptDiffEntry }) {
   const delta = stringifyDiffDelta(tokenDiff);
 
   if (delta === 'added') {
-    return <span className="text-green-500">Added</span>;
+    return <span className="text-green-700 dark:text-green-400">Added</span>;
   }
   if (delta === 'removed') {
-    return <span className="text-red-500">Removed</span>;
+    return <span className="text-red-700 dark:text-red-400">Removed</span>;
   }
   if (delta === '-') {
     return '-';
