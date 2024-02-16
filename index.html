@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>AI Prompt Editor</title>
+    <meta name="description" content="Text editor for AI prompts." />
+
+    <meta
+      property="og:url"
+      content="https://github.com/Scthe/ai-prompt-editor"
+    />
+    <meta property="og:title" content="Animation playground" />
+    <meta property="og:description" content="Text editor for AI prompts." />
+    <meta property="og:site_name" content="Animation playground" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        font-family: 'Merriweather Sans', sans-serif !important;
+      }
+    </style>
+
+    <!-- Theme toggle script -->
+    <script>
+      (function () {
+        window.setAppTheme = setAppTheme;
+        const THEME_LIGHT_BG = '#d1d5db';
+        const THEME_DARK_BG = '#262626';
+
+        const osThemeDark = Boolean(
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+        );
+        const storageThemeColor = localStorage.getItem('app-theme');
+        const storageThemeDark = storageThemeColor === 'dark-theme';
+        const isDark =
+          storageThemeColor !== undefined // has value, so decided by local storage
+            ? storageThemeColor === 'dark-theme'
+            : osThemeDark;
+        setAppTheme(isDark ? 'dark' : 'light');
+
+        function setAppTheme(nextTheme) {
+          const el = document.documentElement;
+          const setLightTheme = nextTheme === 'light';
+
+          if (setLightTheme) {
+            el.classList.remove('dark-theme');
+            el.classList.add('light-theme');
+            setMetaTheme(THEME_LIGHT_BG);
+          } else {
+            el.classList.remove('light-theme');
+            el.classList.add('dark-theme');
+            setMetaTheme(THEME_DARK_BG);
+          }
+
+          localStorage.setItem(
+            'app-theme',
+            setLightTheme ? 'light-theme' : 'dark-theme'
+          );
+        }
+
+        function setMetaTheme(color) {
+          let el = document.querySelector('meta[name="theme-color"]');
+          if (el == null) {
+            el = document.createElement('meta');
+            el.setAttribute('name', 'theme-color');
+            document.head.appendChild(el);
+          }
+          el.setAttribute('content', color);
+        }
+      })();
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
+  <body>
+    <div id="root"><!--app-html--></div>
+    <script src="index.js" defer></script>
+  </body>
+</html>
