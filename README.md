@@ -33,9 +33,9 @@ In JS I could use [Lark.js](https://pypi.org/project/lark-js/) to generate a par
 
 ## Usage
 
-The first step is to compile [lark grammar](src/lib/lark/prompt_grammar.lark) into `src/lib/lark/prompt_grammar_lark.js`. For now, you can copy the resulting file from [here](). If you want to generate it yourself, take a look at ["Generating JS file from lark grammar"](#generating-js-file-from-lark-grammar).
+Normally, the first step is to compile [lark grammar](src/lib/lark/prompt_grammar.lark) into `src/lib/lark/prompt_grammar_lark.js`. I've decided to commit this file into the repo, as GitHub would not be able to deploy the page without it. See ["Generating JS file from lark grammar"](#generating-js-file-from-lark-grammar) below for more info.
 
-Once you have this file, it's the usual yarn stuff:
+The rest is the usual yarn stuff:
 
 1. `yarn install`
 1. `yarn start` <- dev server
@@ -53,7 +53,7 @@ Once you have this file, it's the usual yarn stuff:
 
 ### Generating JS file from lark grammar
 
-Follow this instruction only if you need to generate `prompt_grammar_lark.js` from scratch. I've already generated this file for you (link above).
+Follow this instruction only if you need to generate `prompt_grammar_lark.js` from scratch. As mentioned before, I've already commited this file into git.
 
 1. `pip install lark-js`. Install `Lark.js`.
 2. `yarn lark:compile`. Compiles `src/lib/lark/prompt_grammar.lark` into `src/lib/lark/prompt_grammar_lark.js`
@@ -61,7 +61,7 @@ Follow this instruction only if you need to generate `prompt_grammar_lark.js` fr
    1. Find `var DATA = {... options: { ... }}` and remove `strict` and `ordered_sets` from options.
    2. Find `const util = typeof require !== 'undefined' && require('util');` and replace it with `const util = undefined;`.
 
-You should have the same file as the one [provided by me]() (minus some prettier formatting). You can always diff both files if something is not working.
+You should have the same file as the one [provided by me](src/lib/lark/prompt_grammar_lark.js) (minus some prettier formatting). You can always diff both files if something is not working.
 
 Interesting process, right? I will not comment on this. If you thought external libraries would work with even the simplest cases, you've chosen the wrong profession.
 
