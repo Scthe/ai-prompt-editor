@@ -1,4 +1,4 @@
-## AI Prompt Editor ([DEMO](https://scthe.github.io/ai-prompt-editor/))
+# AI Prompt Editor ([DEMO](https://scthe.github.io/ai-prompt-editor/))
 
 If you have worked with AUTOMATIC1111's [Stable Diffusion web UI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) for even an hour, you know dealing with prompts is tiresome. There is no syntax highlight, or debug messages. The features are [poorly explained](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features). For example, everything at the start of the prompt (or after `BREAK`) is more important. But do we know where the [75-token](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Features#infinite-prompt-length) `BREAK` will be inserted?
 
@@ -15,7 +15,20 @@ What's more, I've also added a [prompt/image diff](https://scthe.github.io/ai-pr
 - Compare changes between 2 prompts.
 - Read prompts from AI-generated images. It's all in the [Exif](https://en.wikipedia.org/wiki/Exif).
 
+## Examples
+
+
+https://github.com/Scthe/ai-prompt-editor/assets/9325337/24cd91a4-1e7f-4f66-b436-a91c74ee6895
+
+
 _In the left panel, the user adds the term 'masterpiece'. It is shown in the details panel on the right. We can change the view mode, and inspect AST and CLIP tokens. We are warned that 'masterpiece' already exists in the prompt. In the results tab, we are shown the final prompt that was merged from groups: 'My super style', 'Subject', 'Environment and misc', and 'BREAK preview'. Groups can be toggled on/off, moved around, etc. The details panel at the bottom reflects the changes in real time._
+
+<br /><br />
+
+
+https://github.com/Scthe/ai-prompt-editor/assets/9325337/b9ef7d3b-417d-4e68-9ae4-cff5db59cbd6
+
+
 
 _The user adds the term 'aaaaa' to the 'Prompt Before'. The panel on the bottom detects that this term exists in 'Prompt Before', but was removed in 'Prompt After'. The user drags images to both prompts. The original prompts are read from images and compared. The 'Models' tab (available only for images) contains settings like step count, CFG scale, or sampler._
 
@@ -23,10 +36,11 @@ _The user adds the term 'aaaaa' to the 'Prompt Before'. The panel on the bottom 
 
 [Stable Diffusion web UI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) is open-source. We know what happens to the prompt. It's all a matter of converting the code to JS. It goes like this:
 
+1. Remove LoRAs and Hypernetworks from the prompt text.
 1. Use Lark to parse the prompt using [grammar](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/prompt_parser.py#L15).
 2. Use lark transformers to [resolve the values](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/prompt_parser.py#L100) for scheduled and alternate based on the current step.
 3. Generate the final prompt after scheduled and alternate are replaced. This is a string. We no longer use AST after this step. We only needed it to parse scheduled and alternate.
-4. Use a [regex](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/prompt_parser.py#L352) to get an array of tuples: `("text", attention)`. E.g. `("house, tree,hill,sky", 1.3)`.
+4. Use a [regex](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/prompt_parser.py#L352) to get an array of tuples: `("text", attention)`. E.g. `[("house, tree,hill,sky", 1.3), ("flowers", 1.1)]`.
 5. Use CLIP tokenizer to [generate](https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/cf2772fab0af5573da775e7437e6acdca424f26e/modules/sd_hijack_clip.py#L84) `PromptChunks`. Each `PromptChunk` contains CLIP-encoded token IDs and their weights. Each chunk contains 77 tokens, but 2 are reserved for start and end tokens.
 
 In JS I could use [Lark.js](https://pypi.org/project/lark-js/) to generate a parser for the first 2 steps. In step 4 I have used the same regex. For the CLIP tokenizer, I adapted the code from [clip-bpe-js](https://github.com/josephrocca/clip-bpe-js).
@@ -47,7 +61,7 @@ The rest is the usual yarn stuff:
 - `yarn preview`. Builds prod version into `./build`, starts [http-server](https://www.npmjs.com/package/http-server).
 - `yarn clean`. Remove all files from `./build`.
 - `yarn lint`. Runs linter.
-- `yarn ts-dry`. Dry test compiles the whole project using typescript.
+- `yarn ts-dry`. Dry test compiles the whole project using TypeScript.
 - `yarn test`. Run tests.
 - `yarn test:watch`. Run tests in watch mode.
 
@@ -77,11 +91,11 @@ I've decided to be stricter than webui. Prompts like e.g. `(aaa, BREAK bbb)` are
 
 The main flow is in [src/parser/index.ts](src/parser/index.ts). Each subsequent step has its own function, so it should be easy to navigate.
 
-Keep in mind that building AST and CLIP tokenization is slow. I've moved this inside the [web worker](src/hooks/useParsedPrompt.ts#29). This makes it hard to debug using browser tools. Personally, I don't mind. The code in `src/parser` is covered by unit tests. If you need the debugger, run Jest from Visual Studio Code's `JavaScript Debug Terminal`.
+Keep in mind that building AST and CLIP tokenization is slow. I've moved this inside the [web worker](src/hooks/useParsedPrompt.ts#L29). This makes it hard to debug using browser tools. Personally, I don't mind. The code in `src/parser` is covered by unit tests. If you need the debugger, run Jest from Visual Studio Code's `JavaScript Debug Terminal`.
 
 **Q: Can I debug scheduled/alternate?**
 
-Scheduled/alternate prompts are parsed and visible in AST. In the final prompt, they will be always resolved using `step=0`, `maxStep=10`. This is currently [hardcoded](src/parser/resolveAlternateAndScheduled.ts). You can change the values and it will resolve correctly (check `resolveAlternateAndScheduled.test.ts`). I just have not written a UI to configure this easier. Maybe some separate `Variants` tab? Anyway, both features are rarely used, so debugging them using AST should be enough.
+Scheduled/alternate prompts are parsed and visible in AST. In the final prompt, they will be always resolved using `step=0`, `maxStep=10`. This is currently [hardcoded](src/parser/resolveAlternateAndScheduled.ts). You can change the values in the code and it will resolve correctly (check `resolveAlternateAndScheduled.test.ts`). I just have not written a UI to configure this easier. Maybe some separate `Variants` tab? Anyway, both features are rarely used, so debugging them using AST should be enough.
 
 **Q: Does it support styles?**
 
@@ -109,4 +123,4 @@ And JS:
 - [@dnd-kit](https://dndkit.com/).
 - [Material Design Icons (mdi)](https://pictogrammers.com/library/mdi/).
 - yarn, esbuild, TypeScript, React, Tailwind CSS, Jest. The usual stack.
-  - Have fun [working with ASTs](src/lib/lark/prompt_grammar.types.ts#243) without TypeScript.
+  - Have fun [working with ASTs](src/lib/lark/prompt_grammar.types.ts#L243) without TypeScript.
